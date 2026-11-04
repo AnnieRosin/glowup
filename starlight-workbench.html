@@ -481,12 +481,111 @@ body[data-skin="galaxy"] ::-webkit-scrollbar-thumb{background:rgba(150,140,255,.
 body[data-skin="galaxy"] ::-webkit-scrollbar-thumb:hover{background:rgba(150,140,255,.45)}
 body[data-skin="galaxy"] ::-webkit-scrollbar-track{background:transparent}
 
+/* ---------- v5.6 主题世界：樱花雨 · 森林 · 海洋 · 云端 ---------- */
+.fx-nature{position:fixed;inset:0;pointer-events:none;display:none;z-index:-1;overflow:hidden}
+.fx-nature i{position:absolute;display:none}
+
+/* 🌸 樱花：粉樱天空 + 飘落花瓣 */
+body[data-skin="sakura"]{background:linear-gradient(180deg,#FFE7F0 0%,#FFF5EF 50%,#FDEFF6 100%) fixed}
+body[data-skin="sakura"] .fx-nature{display:block}
+body[data-skin="sakura"] .fx-nature i{display:block;top:-5vh;width:13px;height:13px;
+  border-radius:90% 10% 90% 10%;background:linear-gradient(135deg,#FBC0D8,#F09BBD);
+  opacity:.75;animation:fallSway 12s linear infinite}
+body[data-skin="sakura"] .fx-nature i:nth-child(3n){background:linear-gradient(135deg,#DCD4F9,#BDB2F0)}
+body[data-skin="sakura"] .fx-nature i:nth-child(4n){width:9px;height:9px;opacity:.55}
+body[data-skin="sakura"] .fx-nature i:nth-child(1){left:5%;animation-delay:-1s;animation-duration:11s}
+body[data-skin="sakura"] .fx-nature i:nth-child(2){left:14%;animation-delay:-6s;animation-duration:14s}
+body[data-skin="sakura"] .fx-nature i:nth-child(3){left:23%;animation-delay:-3s;animation-duration:10s}
+body[data-skin="sakura"] .fx-nature i:nth-child(4){left:31%;animation-delay:-9s;animation-duration:15s}
+body[data-skin="sakura"] .fx-nature i:nth-child(5){left:40%;animation-delay:-4s;animation-duration:12s}
+body[data-skin="sakura"] .fx-nature i:nth-child(6){left:49%;animation-delay:-11s;animation-duration:13s}
+body[data-skin="sakura"] .fx-nature i:nth-child(7){left:58%;animation-delay:-2s;animation-duration:10s}
+body[data-skin="sakura"] .fx-nature i:nth-child(8){left:66%;animation-delay:-8s;animation-duration:16s}
+body[data-skin="sakura"] .fx-nature i:nth-child(9){left:75%;animation-delay:-5s;animation-duration:12s}
+body[data-skin="sakura"] .fx-nature i:nth-child(10){left:83%;animation-delay:-12s;animation-duration:14s}
+body[data-skin="sakura"] .fx-nature i:nth-child(11){left:91%;animation-delay:-7s;animation-duration:11s}
+body[data-skin="sakura"] .fx-nature i:nth-child(12){left:97%;animation-delay:-3s;animation-duration:13s}
+@keyframes fallSway{0%{transform:translate(0,-5vh) rotate(0deg)}50%{transform:translate(4vw,50vh) rotate(210deg)}100%{transform:translate(-2vw,108vh) rotate(420deg)}}
+
+/* 🌿 森林：晨光斜射 + 飘落树叶 */
+body[data-skin="mint"]{background:linear-gradient(180deg,#DFF4E8 0%,#F2FBF4 55%,#EDF8E8 100%) fixed}
+body[data-skin="mint"] .fx-nature{display:block}
+body[data-skin="mint"] .fx-nature::before{content:'';position:absolute;inset:0;
+  background:linear-gradient(115deg,rgba(255,255,225,.5) 0%,transparent 22%),
+             linear-gradient(115deg,transparent 30%,rgba(255,255,220,.35) 38%,transparent 52%),
+             linear-gradient(115deg,transparent 60%,rgba(255,255,215,.3) 70%,transparent 84%)}
+body[data-skin="mint"] .fx-nature i{display:block;top:-5vh;width:15px;height:11px;
+  border-radius:0 80% 0 80%;background:linear-gradient(135deg,#A8DCA8,#6FBF7E);
+  opacity:.7;animation:fallSway 13s linear infinite}
+body[data-skin="mint"] .fx-nature i:nth-child(3n){background:linear-gradient(135deg,#C9E39A,#96C45F)}
+body[data-skin="mint"] .fx-nature i:nth-child(4n){width:11px;height:8px;opacity:.55;transform-origin:center}
+body[data-skin="mint"] .fx-nature i:nth-child(1){left:6%;animation-delay:-2s;animation-duration:13s}
+body[data-skin="mint"] .fx-nature i:nth-child(2){left:16%;animation-delay:-8s;animation-duration:16s}
+body[data-skin="mint"] .fx-nature i:nth-child(3){left:26%;animation-delay:-4s;animation-duration:12s}
+body[data-skin="mint"] .fx-nature i:nth-child(4){left:35%;animation-delay:-11s;animation-duration:15s}
+body[data-skin="mint"] .fx-nature i:nth-child(5){left:44%;animation-delay:-6s;animation-duration:13s}
+body[data-skin="mint"] .fx-nature i:nth-child(6){left:53%;animation-delay:-1s;animation-duration:14s}
+body[data-skin="mint"] .fx-nature i:nth-child(7){left:61%;animation-delay:-9s;animation-duration:11s}
+body[data-skin="mint"] .fx-nature i:nth-child(8){left:70%;animation-delay:-5s;animation-duration:16s}
+body[data-skin="mint"] .fx-nature i:nth-child(9){left:78%;animation-delay:-12s;animation-duration:12s}
+body[data-skin="mint"] .fx-nature i:nth-child(10){left:86%;animation-delay:-3s;animation-duration:15s}
+body[data-skin="mint"] .fx-nature i:nth-child(11){left:93%;animation-delay:-7s;animation-duration:13s}
+body[data-skin="mint"] .fx-nature i:nth-child(12){left:98%;animation-delay:-10s;animation-duration:14s}
+
+/* 🌊 海洋：浅海波光 + 上升气泡 */
+body[data-skin="night"]{background:linear-gradient(180deg,#C9E7FF 0%,#E3F3FF 45%,#EAF7FF 100%) fixed}
+body[data-skin="night"] .fx-nature{display:block}
+body[data-skin="night"] .fx-nature::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 30% at 30% 8%,rgba(255,255,255,.55),transparent 70%),
+             radial-gradient(ellipse 50% 25% at 75% 18%,rgba(255,255,255,.4),transparent 70%)}
+body[data-skin="night"] .fx-nature i{display:block;bottom:-6vh;top:auto;width:16px;height:16px;border-radius:50%;
+  border:2px solid rgba(110,175,235,.5);background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.65),rgba(170,215,250,.1));
+  opacity:0;animation:riseUp 11s linear infinite}
+body[data-skin="night"] .fx-nature i:nth-child(4n){width:9px;height:9px}
+body[data-skin="night"] .fx-nature i:nth-child(5n){width:24px;height:24px;opacity:0}
+body[data-skin="night"] .fx-nature i:nth-child(1){left:7%;animation-delay:-2s;animation-duration:9s}
+body[data-skin="night"] .fx-nature i:nth-child(2){left:17%;animation-delay:-6s;animation-duration:12s}
+body[data-skin="night"] .fx-nature i:nth-child(3){left:27%;animation-delay:-4s;animation-duration:10s}
+body[data-skin="night"] .fx-nature i:nth-child(4){left:36%;animation-delay:-8s;animation-duration:11s}
+body[data-skin="night"] .fx-nature i:nth-child(5){left:45%;animation-delay:-1s;animation-duration:13s}
+body[data-skin="night"] .fx-nature i:nth-child(6){left:54%;animation-delay:-7s;animation-duration:9.5s}
+body[data-skin="night"] .fx-nature i:nth-child(7){left:62%;animation-delay:-10s;animation-duration:12s}
+body[data-skin="night"] .fx-nature i:nth-child(8){left:70%;animation-delay:-3s;animation-duration:10.5s}
+body[data-skin="night"] .fx-nature i:nth-child(9){left:79%;animation-delay:-5s;animation-duration:14s}
+body[data-skin="night"] .fx-nature i:nth-child(10){left:86%;animation-delay:-9s;animation-duration:11s}
+body[data-skin="night"] .fx-nature i:nth-child(11){left:93%;animation-delay:-2s;animation-duration:12.5s}
+body[data-skin="night"] .fx-nature i:nth-child(12){left:98%;animation-delay:-6s;animation-duration:10s}
+@keyframes riseUp{0%{transform:translate(0,0);opacity:0}8%{opacity:.85}85%{opacity:.6}100%{transform:translate(2.5vw,-110vh);opacity:0}}
+
+/* ☁️ 云端：暖阳 + 白云漂移 */
+body[data-skin="cream"]{background:linear-gradient(180deg,#FFEDD2 0%,#FFF8EC 50%,#FFF3E6 100%) fixed}
+body[data-skin="cream"] .fx-nature{display:block}
+body[data-skin="cream"] .fx-nature::before{content:'';position:absolute;top:-12vh;left:58%;width:44vh;height:44vh;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,214,130,.55),rgba(255,214,130,0) 68%)}
+body[data-skin="cream"] .fx-nature i{display:block;top:6vh;width:96px;height:26px;border-radius:999px;background:#fff;
+  opacity:.9;filter:blur(1px);animation:cloudDrift 80s linear infinite}
+body[data-skin="cream"] .fx-nature i::before{content:'';position:absolute;width:40px;height:40px;border-radius:50%;background:#fff;top:-20px;left:18px}
+body[data-skin="cream"] .fx-nature i::after{content:'';position:absolute;width:28px;height:28px;border-radius:50%;background:#fff;top:-13px;left:50px}
+body[data-skin="cream"] .fx-nature i:nth-child(2){top:16vh;transform:scale(.7);opacity:.75;animation-duration:70s;animation-delay:-20s}
+body[data-skin="cream"] .fx-nature i:nth-child(3){top:27vh;transform:scale(1.15);animation-duration:95s;animation-delay:-50s}
+body[data-skin="cream"] .fx-nature i:nth-child(4){top:38vh;transform:scale(.6);opacity:.65;animation-duration:65s;animation-delay:-35s}
+body[data-skin="cream"] .fx-nature i:nth-child(5){top:52vh;transform:scale(.85);opacity:.8;animation-duration:85s;animation-delay:-10s}
+body[data-skin="cream"] .fx-nature i:nth-child(6){top:66vh;transform:scale(.55);opacity:.6;animation-duration:60s;animation-delay:-45s}
+body[data-skin="cream"] .fx-nature i:nth-child(7){top:78vh;transform:scale(.95);animation-duration:90s;animation-delay:-60s}
+body[data-skin="cream"] .fx-nature i:nth-child(8){top:88vh;transform:scale(.65);opacity:.7;animation-duration:70s;animation-delay:-28s}
+body[data-skin="cream"] .fx-nature i:nth-child(9){top:47vh;transform:scale(.75);opacity:.7;animation-duration:78s;animation-delay:-38s}
+body[data-skin="cream"] .fx-nature i:nth-child(10){top:22vh;transform:scale(1.05);opacity:.85;animation-duration:100s;animation-delay:-70s}
+body[data-skin="cream"] .fx-nature i:nth-child(11){top:59vh;transform:scale(.5);opacity:.6;animation-duration:62s;animation-delay:-15s}
+body[data-skin="cream"] .fx-nature i:nth-child(12){top:33vh;transform:scale(.8);animation-duration:88s;animation-delay:-55s}
+@keyframes cloudDrift{from{left:-20vw}to{left:105vw}}
+
 </style>
 </head>
 <body data-skin="galaxy">
 <div class="fx-aurora" aria-hidden="true"></div>
 <div class="fx-stars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
 <div class="fx-meteors" aria-hidden="true"><i></i><i></i><i></i></div>
+<div class="fx-nature" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
 <div class="wrap">
 
   <div class="top">
@@ -508,10 +607,10 @@ body[data-skin="galaxy"] ::-webkit-scrollbar-track{background:transparent}
       <input id="monthTheme" placeholder="如：睡眠月 / 体态月" maxlength="12">
       <div class="skin-dots">
         <span class="skin-dot on" data-skin="galaxy" style="background:linear-gradient(135deg,#3A3178,#8F87E8,#E0709E)" title="银河夜景"></span>
-        <span class="skin-dot" data-skin="sakura" style="background:linear-gradient(135deg,#CECBF6,#F4C0D1)" title="樱花"></span>
-        <span class="skin-dot" data-skin="mint" style="background:linear-gradient(135deg,#9FE1CB,#C0DD97)" title="薄荷"></span>
-        <span class="skin-dot" data-skin="cream" style="background:linear-gradient(135deg,#FAC775,#F5C4B3)" title="奶油"></span>
-        <span class="skin-dot" data-skin="night" style="background:linear-gradient(135deg,#B5D4F4,#CECBF6)" title="清蓝"></span>
+        <span class="skin-dot" data-skin="sakura" style="background:linear-gradient(135deg,#CECBF6,#F4C0D1)" title="樱花雨 🌸"></span>
+        <span class="skin-dot" data-skin="mint" style="background:linear-gradient(135deg,#6FBF7E,#C9E39A)" title="森林 🌿"></span>
+        <span class="skin-dot" data-skin="cream" style="background:linear-gradient(135deg,#FAC775,#F5C4B3)" title="云端 ☁️"></span>
+        <span class="skin-dot" data-skin="night" style="background:linear-gradient(135deg,#378ADD,#C9E7FF)" title="海洋 🌊"></span>
       </div>
     </div>
   </div>
