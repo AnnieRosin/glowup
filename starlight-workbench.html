@@ -376,9 +376,82 @@ body[data-skin="galaxy"] .env.opened{background:linear-gradient(150deg,#33204A,#
 body[data-skin="galaxy"] .rp-row{border-bottom-color:rgba(255,255,255,.08)}
 body[data-skin="galaxy"] #letterDays{background:rgba(255,255,255,.08)}
 
+/* ---------- v5.5 光泽精修：极光 · 流星 · 玻璃质感 ---------- */
+.fx-aurora,.fx-stars,.fx-meteors{position:fixed;inset:0;pointer-events:none;display:none;z-index:-1}
+body[data-skin="galaxy"] .fx-aurora{display:block;filter:blur(2px);animation:auroraDrift 32s ease-in-out infinite alternate;
+  background:
+    radial-gradient(560px 300px at 82% 10%,rgba(129,86,255,.17),transparent 70%),
+    radial-gradient(480px 280px at 10% 55%,rgba(255,110,180,.11),transparent 70%),
+    radial-gradient(720px 360px at 50% 108%,rgba(66,208,214,.11),transparent 70%),
+    radial-gradient(340px 220px at 34% 22%,rgba(84,140,255,.09),transparent 70%)}
+@keyframes auroraDrift{0%{transform:translate(0,0) rotate(0deg)}100%{transform:translate(1.6%,-1.4%) rotate(.5deg)}}
+body[data-skin="galaxy"] .fx-stars{display:block}
+.fx-stars i{position:absolute;width:3px;height:3px;border-radius:50%;background:#fff;
+  box-shadow:0 0 9px 2px rgba(207,201,245,.65);opacity:.15;animation:twinkle 4.5s ease-in-out infinite}
+.fx-stars i:nth-child(1){top:8%;left:11%;animation-delay:.2s}
+.fx-stars i:nth-child(2){top:16%;left:58%;width:4px;height:4px;box-shadow:0 0 11px 3px rgba(255,231,178,.7);animation-delay:1.4s;animation-duration:5.2s}
+.fx-stars i:nth-child(3){top:30%;left:82%;animation-delay:2.6s;animation-duration:3.8s}
+.fx-stars i:nth-child(4){top:44%;left:24%;animation-delay:.9s;animation-duration:5.6s}
+.fx-stars i:nth-child(5){top:62%;left:74%;width:4px;height:4px;box-shadow:0 0 11px 3px rgba(255,190,220,.7);animation-delay:3.4s}
+.fx-stars i:nth-child(6){top:70%;left:8%;animation-delay:2s;animation-duration:6s}
+.fx-stars i:nth-child(7){top:86%;left:46%;animation-delay:4.2s;animation-duration:4.4s}
+.fx-stars i:nth-child(8){top:5%;left:38%;animation-delay:1.8s;animation-duration:5s}
+@keyframes twinkle{0%,100%{opacity:.12;transform:scale(.8)}50%{opacity:.95;transform:scale(1.3)}}
+body[data-skin="galaxy"] .fx-meteors{display:block}
+.fx-meteors i{position:absolute;width:150px;height:1.5px;border-radius:2px;opacity:0;
+  background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.95) 55%,rgba(207,201,245,0));
+  box-shadow:0 0 8px rgba(255,255,255,.4);animation:shoot 9s linear infinite}
+.fx-meteors i:nth-child(1){top:10%;left:6%;animation-delay:2.5s}
+.fx-meteors i:nth-child(2){top:26%;left:48%;animation-delay:7s;animation-duration:12s}
+.fx-meteors i:nth-child(3){top:5%;left:66%;animation-delay:11.5s;animation-duration:14s}
+@keyframes shoot{0%{opacity:0;transform:rotate(-38deg) translateX(0)}3%{opacity:.9}11%{opacity:0;transform:rotate(-38deg) translateX(430px)}100%{opacity:0;transform:rotate(-38deg) translateX(430px)}}
+
+body[data-skin="galaxy"] .card{background:linear-gradient(165deg,rgba(40,34,92,.72),rgba(25,20,58,.84));
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-color:rgba(165,155,255,.16);
+  box-shadow:0 10px 34px rgba(7,4,26,.45),inset 0 1px 0 rgba(255,255,255,.07);
+  transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease}
+body[data-skin="galaxy"] .card:hover{transform:translateY(-2px);border-color:rgba(190,180,255,.34);
+  box-shadow:0 14px 44px rgba(7,4,26,.6),0 0 28px rgba(129,98,255,.13),inset 0 1px 0 rgba(255,255,255,.1)}
+body[data-skin="galaxy"] .brand h1{background:linear-gradient(90deg,#EDEAFF,#BBA9FF 30%,#F2BFE6 55%,#FFE9C7 78%,#EDEAFF);
+  background-size:220% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+  animation:titleShine 7s linear infinite;filter:drop-shadow(0 0 14px rgba(150,120,255,.4))}
+@keyframes titleShine{to{background-position:220% center}}
+body[data-skin="galaxy"] .tabs{backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+body[data-skin="galaxy"] .tab.on{background:linear-gradient(135deg,rgba(129,98,255,.9),rgba(212,83,126,.8));
+  color:#fff;box-shadow:0 4px 18px rgba(129,98,255,.4)}
+body[data-skin="galaxy"] .pill{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border:1px solid rgba(165,155,255,.14)}
+body[data-skin="galaxy"] .pill .v{color:#CFC4FF;text-shadow:0 0 14px rgba(150,120,255,.55)}
+body[data-skin="galaxy"] .bar>i{background:linear-gradient(90deg,#8F87E8,#C99BE0 55%,#F0A9C8);position:relative;overflow:hidden}
+body[data-skin="galaxy"] .bar>i::after{content:'';position:absolute;inset:0;transform:translateX(-100%);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);
+  animation:barGlow 2.8s ease-in-out infinite}
+@keyframes barGlow{55%,100%{transform:translateX(110%)}}
+body[data-skin="galaxy"] .xpbar>i,body[data-skin="galaxy"] .xpbar>b{position:relative;overflow:hidden}
+body[data-skin="galaxy"] .xpbar>i::after,body[data-skin="galaxy"] .xpbar>b::after{content:'';position:absolute;inset:0;transform:translateX(-100%);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.6),transparent);
+  animation:barGlow 2.4s ease-in-out infinite}
+body[data-skin="galaxy"] .btn{background:linear-gradient(135deg,#8F87E8,#C86D9E);box-shadow:0 4px 16px rgba(129,98,255,.35)}
+body[data-skin="galaxy"] .btn:hover{box-shadow:0 6px 22px rgba(129,98,255,.55);transform:translateY(-1px)}
+body[data-skin="galaxy"] .streak-card{box-shadow:0 8px 28px rgba(20,60,50,.4),inset 0 1px 0 rgba(255,255,255,.1);border:1px solid rgba(122,217,196,.25)}
+body[data-skin="galaxy"] .quote-box{box-shadow:0 8px 28px rgba(50,25,20,.35);border:1px solid rgba(243,163,126,.22)}
+body[data-skin="galaxy"] .badge{box-shadow:0 6px 18px rgba(120,90,20,.3)}
+body[data-skin="galaxy"] .fate-front{box-shadow:0 10px 30px rgba(20,10,50,.55),0 0 24px rgba(129,98,255,.15)}
+body[data-skin="galaxy"] .donut circle:last-child{filter:drop-shadow(0 0 4px rgba(160,140,255,.6))}
+body[data-skin="galaxy"] .skin-dot{transition:transform .2s}
+body[data-skin="galaxy"] .skin-dot:hover{transform:scale(1.2)}
+body[data-skin="galaxy"] ::-webkit-scrollbar{width:8px;height:8px}
+body[data-skin="galaxy"] ::-webkit-scrollbar-thumb{background:rgba(150,140,255,.25);border-radius:4px}
+body[data-skin="galaxy"] ::-webkit-scrollbar-thumb:hover{background:rgba(150,140,255,.45)}
+body[data-skin="galaxy"] ::-webkit-scrollbar-track{background:transparent}
+
 </style>
 </head>
 <body data-skin="galaxy">
+<div class="fx-aurora" aria-hidden="true"></div>
+<div class="fx-stars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+<div class="fx-meteors" aria-hidden="true"><i></i><i></i><i></i></div>
 <div class="wrap">
 
   <div class="top">
