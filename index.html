@@ -23,6 +23,28 @@
 body[data-skin="mint"]{--a1:#E1F5EE;--a2:#9FE1CB;--a3:#1D9E75;--a4:#0F6E56;--a5:#04342C;--b1:#EAF3DE;--b2:#C0DD97;--b3:#639922;--b4:#3B6D11;--bg:#F7FBF6}
 body[data-skin="cream"]{--a1:#FAEEDA;--a2:#FAC775;--a3:#BA7517;--a4:#854F0B;--a5:#412402;--b1:#FAECE7;--b2:#F5C4B3;--b3:#D85A30;--b4:#993C1D;--bg:#FFFBF2}
 body[data-skin="night"]{--a1:#E6F1FB;--a2:#B5D4F4;--a3:#378ADD;--a4:#185FA5;--a5:#042C53;--b1:#EEEDFE;--b2:#CECBF6;--b3:#7F77DD;--b4:#534AB7;--bg:#F6F9FF}
+body[data-skin="sakura"]{--a1:#EEEDFE;--a2:#CECBF6;--a3:#7F77DD;--a4:#534AB7;--a5:#3C3489;--b1:#FBEAF0;--b2:#F4C0D1;--b3:#D4537E;--b4:#993556;--bg:#FFF9F5}
+/* 银河夜景（默认）：深空底色 + 星光配色 */
+body[data-skin="galaxy"]{
+  --a1:#262052;--a2:#322A66;--a3:#8F87E8;--a4:#BDB6F5;--a5:#EFEDFF;
+  --b1:#3A2140;--b2:#5B2E55;--b3:#E0709E;--b4:#F0A5C0;
+  --bg:#161233;--card:#1F1A4A;--tx:#ECE9FA;--tx2:#9B93C6;--bd:rgba(255,255,255,.13);
+  --sh:0 4px 24px rgba(0,0,0,.4);
+  --amber-50:#3A2E19;--amber-400:#F0B95A;--amber-600:#F5CE8B;
+  --pink-50:#3B2030;--pink-400:#E0709E;--pink-600:#F2A6C4;
+  --blue-50:#1D2C44;--blue-400:#5FA8E8;--blue-600:#8FC4F2;
+  --purple-50:#282150;--purple-400:#8F87E8;--purple-600:#BDB6F5;
+  --green-50:#1F3222;--green-400:#7FBE4A;--green-600:#A8D97E;
+  --teal-50:#173230;--teal-400:#35BFA0;--teal-600:#7AD9C4;
+  --coral-50:#3B241D;--coral-400:#E8794A;--coral-600:#F3A37E;
+  --gray-50:#262242;--gray-400:#8F8AAC;--gray-600:#B7B3D4;
+  --hm0:#2B2554;--hm1:#44398C;--hm2:#5F52B5;--hm3:#8F87E8;--hm4:#C3BCF7;
+  --chart-grid:rgba(255,255,255,.09);--chart-tick:#9B93C6;--chart-line:#A79FF0;--chart-accent:#E0709E;--chart-bar:rgba(164,156,240,.55);
+}
+body[data-skin="sakura"],body[data-skin="mint"],body[data-skin="cream"],body[data-skin="night"]{
+  --hm0:#F1EFE8;--hm1:#CECBF6;--hm2:#AFA9EC;--hm3:#7F77DD;--hm4:#534AB7;
+  --chart-grid:rgba(0,0,0,.05);--chart-tick:#888780;--chart-line:#7F77DD;--chart-accent:#D4537E;--chart-bar:rgba(127,119,221,.55);
+}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif;background:var(--bg);color:var(--tx);line-height:1.6;padding:18px;transition:background .3s}
 .wrap{max-width:1000px;margin:0 auto}
@@ -271,6 +293,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-
 .sky-name button{background:rgba(255,255,255,.16);border:none;color:#fff;border-radius:999px;padding:5px 12px;font-size:11px;cursor:pointer;font-family:inherit}
 
 .env-row{display:flex;gap:12px;flex-wrap:wrap}
+#letterDays{background:rgba(255,255,255,.75)}
 .env{position:relative;background:linear-gradient(150deg,#FDF8F0,#F6EDFF);border:1px solid rgba(127,119,221,.25);
   border-radius:14px;padding:16px 16px 14px;min-width:200px;flex:1;max-width:260px}
 .env .e-seal{position:absolute;right:12px;top:12px;font-size:18px}
@@ -288,9 +311,74 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-
 .cd .c-n{font-size:24px;font-weight:600;color:var(--a4)}
 .cd .c-s{font-size:10px;color:var(--tx2)}
 .cd .c-x{position:absolute;top:6px;right:8px;border:none;background:none;color:var(--tx2);cursor:pointer;font-size:11px}
+
+/* ---------- 银河夜景组件适配 ---------- */
+body[data-skin="galaxy"]{background:radial-gradient(ellipse at 15% -5%,#3A3178 0%,#241E56 45%,#120E2C 100%) fixed}
+body[data-skin="galaxy"]::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opacity:.8;
+  background-image:
+    radial-gradient(1.5px 1.5px at 8% 12%,rgba(255,255,255,.9),transparent 100%),
+    radial-gradient(1px 1px at 22% 42%,rgba(255,255,255,.7),transparent 100%),
+    radial-gradient(1.5px 1.5px at 35% 8%,rgba(207,201,245,.9),transparent 100%),
+    radial-gradient(1px 1px at 48% 28%,rgba(255,255,255,.6),transparent 100%),
+    radial-gradient(2px 2px at 62% 15%,rgba(255,240,190,.9),transparent 100%),
+    radial-gradient(1px 1px at 74% 38%,rgba(255,255,255,.7),transparent 100%),
+    radial-gradient(1.5px 1.5px at 88% 10%,rgba(207,201,245,.8),transparent 100%),
+    radial-gradient(1px 1px at 94% 52%,rgba(255,255,255,.6),transparent 100%),
+    radial-gradient(1px 1px at 15% 68%,rgba(255,255,255,.5),transparent 100%),
+    radial-gradient(1.5px 1.5px at 30% 85%,rgba(255,240,190,.7),transparent 100%),
+    radial-gradient(1px 1px at 55% 72%,rgba(255,255,255,.6),transparent 100%),
+    radial-gradient(1px 1px at 70% 90%,rgba(207,201,245,.6),transparent 100%),
+    radial-gradient(1.5px 1.5px at 84% 76%,rgba(255,255,255,.7),transparent 100%),
+    radial-gradient(1px 1px at 42% 55%,rgba(255,255,255,.4),transparent 100%),
+    radial-gradient(1px 1px at 5% 90%,rgba(255,255,255,.5),transparent 100%)}
+body[data-skin="galaxy"] .top{border-color:rgba(143,135,232,.25)}
+body[data-skin="galaxy"] .tabs{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);box-shadow:none}
+body[data-skin="galaxy"] .pill{background:rgba(255,255,255,.07)}
+body[data-skin="galaxy"] .xpbar{background:rgba(255,255,255,.1)}
+body[data-skin="galaxy"] .theme-row input{background:rgba(255,255,255,.08)}
+body[data-skin="galaxy"] .skin-dot{border-color:#3A3178}
+body[data-skin="galaxy"] .t3{background:rgba(255,255,255,.06)}
+body[data-skin="galaxy"] .t3 input::placeholder{color:#6F679C}
+body[data-skin="galaxy"] .cat-ic{background:rgba(255,255,255,.1);box-shadow:none}
+body[data-skin="galaxy"] .bar{background:rgba(255,255,255,.12)}
+body[data-skin="galaxy"] .chip{background:rgba(255,255,255,.1)}
+body[data-skin="galaxy"] .chip.m{background:rgba(255,255,255,.05)}
+body[data-skin="galaxy"] .wk{background:rgba(255,255,255,.12)}
+body[data-skin="galaxy"] .items{border-top-color:rgba(255,255,255,.12)}
+body[data-skin="galaxy"] .item{background:rgba(255,255,255,.06)}
+body[data-skin="galaxy"] .item:hover{background:rgba(255,255,255,.12)}
+body[data-skin="galaxy"] .chk{background:rgba(255,255,255,.08)}
+body[data-skin="galaxy"] .addrow input{background:rgba(255,255,255,.07);color:var(--tx)}
+body[data-skin="galaxy"] .tl{background:rgba(255,255,255,.04)}
+body[data-skin="galaxy"] .tl-hour{border-top-color:rgba(255,255,255,.07)}
+body[data-skin="galaxy"] .tl-hour span{color:var(--tx2);background:transparent}
+body[data-skin="galaxy"] .tl-block{box-shadow:none}
+body[data-skin="galaxy"] .sched-item{background:rgba(255,255,255,.05)}
+body[data-skin="galaxy"] .s-b{background:rgba(255,255,255,.1);color:var(--amber-600)}
+body[data-skin="galaxy"] .s-b.ok{background:rgba(127,190,74,.18);color:#A8D97E}
+body[data-skin="galaxy"] .s-x{color:var(--tx2)}
+body[data-skin="galaxy"] .streak-card{background:linear-gradient(135deg,#14302E,#1F3A2C);color:#7AD9C4}
+body[data-skin="galaxy"] .quote-box{background:linear-gradient(135deg,#3B241D,#46283E)}
+body[data-skin="galaxy"] .quote-box .tx{color:#F3A37E}
+body[data-skin="galaxy"] .rw{background:rgba(255,255,255,.05)}
+body[data-skin="galaxy"] .rw button:disabled{background:rgba(255,255,255,.08);color:#6F679C}
+body[data-skin="galaxy"] .badge{background:linear-gradient(135deg,#4A3A1E,#6B4E22);color:#F5CE8B}
+body[data-skin="galaxy"] .badge.lock{background:rgba(255,255,255,.06);color:#6F679C}
+body[data-skin="galaxy"] .modal{background:#241E56}
+body[data-skin="galaxy"] .fg input,body[data-skin="galaxy"] .fg select{background:rgba(255,255,255,.07);color:var(--tx)}
+body[data-skin="galaxy"] .mact .s{background:rgba(255,255,255,.08);color:var(--tx2)}
+body[data-skin="galaxy"] .jcard{border-color:rgba(143,135,232,.2)}
+body[data-skin="galaxy"] .jcard textarea{background:rgba(255,255,255,.08);color:var(--tx)}
+body[data-skin="galaxy"] .fate-front{background:linear-gradient(160deg,#2C2464,#1F1A4A);border-color:rgba(143,135,232,.4)}
+body[data-skin="galaxy"] .fate-front .ff-m{color:var(--tx2)}
+body[data-skin="galaxy"] .env{background:linear-gradient(150deg,#241E56,#33245C);border-color:rgba(143,135,232,.3)}
+body[data-skin="galaxy"] .env.opened{background:linear-gradient(150deg,#33204A,#3E2C2A);border-color:rgba(224,112,158,.4)}
+body[data-skin="galaxy"] .rp-row{border-bottom-color:rgba(255,255,255,.08)}
+body[data-skin="galaxy"] #letterDays{background:rgba(255,255,255,.08)}
+
 </style>
 </head>
-<body data-skin="sakura">
+<body data-skin="galaxy">
 <div class="wrap">
 
   <div class="top">
@@ -311,7 +399,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-
       <span style="font-size:11px;color:var(--tx2)">本月主题</span>
       <input id="monthTheme" placeholder="如：睡眠月 / 体态月" maxlength="12">
       <div class="skin-dots">
-        <span class="skin-dot on" data-skin="sakura" style="background:linear-gradient(135deg,#CECBF6,#F4C0D1)" title="樱花"></span>
+        <span class="skin-dot on" data-skin="galaxy" style="background:linear-gradient(135deg,#3A3178,#8F87E8,#E0709E)" title="银河夜景"></span>
+        <span class="skin-dot" data-skin="sakura" style="background:linear-gradient(135deg,#CECBF6,#F4C0D1)" title="樱花"></span>
         <span class="skin-dot" data-skin="mint" style="background:linear-gradient(135deg,#9FE1CB,#C0DD97)" title="薄荷"></span>
         <span class="skin-dot" data-skin="cream" style="background:linear-gradient(135deg,#FAC775,#F5C4B3)" title="奶油"></span>
         <span class="skin-dot" data-skin="night" style="background:linear-gradient(135deg,#B5D4F4,#CECBF6)" title="清蓝"></span>
@@ -470,7 +559,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-
       <div class="card-h"><div class="card-t">💌 时光信箱</div><span class="hint">写给未来的自己，时间到了才能拆</span></div>
       <div class="addrow" style="flex-wrap:wrap">
         <input id="letterText" placeholder="对未来的自己说点什么…" style="flex:1;min-width:180px">
-        <select id="letterDays" style="border:none;background:rgba(255,255,255,.75);border-radius:10px;padding:8px 10px;font-size:12px;font-family:inherit;color:var(--tx)">
+        <select id="letterDays" style="border:none;border-radius:10px;padding:8px 10px;font-size:12px;font-family:inherit;color:var(--tx)">
           <option value="7">7 天后</option>
           <option value="30" selected>30 天后</option>
           <option value="100">100 天后</option>
@@ -578,7 +667,7 @@ const BADGES=[
 ];
 
 function defaultData(){
-  return {v:3,mood:null,points:0,xp:0,theme:'sakura',monthTheme:'',
+  return {v:3,mood:null,points:0,xp:0,theme:'galaxy',monthTheme:'',
     makeup:2,makeupMonth:monthKey(),
     categories:META.map(m=>({...m,items:TPL[m.id].map(n=>({name:n,done:false})),open:false})),
     schedules:[],top3:['','',''],history:{},cards:[],badges:[],
@@ -618,6 +707,8 @@ let data=migrate();
 data.fate=data.fate||{date:null,idx:null};
 data.letters=data.letters||[];data.countdowns=data.countdowns||[];
 data.constellationName=data.constellationName||'';data.introDate=data.introDate||'';
+if(!['galaxy','sakura','mint','cream','night'].includes(data.theme))data.theme='galaxy';
+if(data.theme==='sakura'&&!localStorage.getItem(KEY+'_galaxyDone')){data.theme='galaxy';localStorage.setItem(KEY+'_galaxyDone','1');}
 
 // 新的一天：归档 + 重置
 (function rollDay(){
@@ -640,6 +731,7 @@ data.constellationName=data.constellationName||'';data.introDate=data.introDate|
   persist();
 })();
 function persist(){localStorage.setItem(KEY,JSON.stringify(data));}
+function cssv(n){return getComputedStyle(document.body).getPropertyValue(n).trim();}
 
 /* ---------- 通用 ---------- */
 function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('on');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('on'),1800);}
@@ -681,8 +773,8 @@ function renderHeader(){
   document.getElementById('xpTxt').textContent=data.xp+' / '+li.next+' XP';
   document.getElementById('stNum').textContent=streak();
   document.getElementById('monthTheme').value=data.monthTheme||'';
-  document.body.dataset.skin=data.theme||'sakura';
-  document.querySelectorAll('.skin-dot').forEach(s=>s.classList.toggle('on',s.dataset.skin===(data.theme||'sakura')));
+  document.body.dataset.skin=data.theme||'galaxy';
+  document.querySelectorAll('.skin-dot').forEach(s=>s.classList.toggle('on',s.dataset.skin===(data.theme||'galaxy')));
 }
 
 /* ---------- 连续 ---------- */
@@ -888,26 +980,26 @@ function initCharts(){
   if(chartsReady)return;chartsReady=true;
   const w=weekSeries();
   cWeek=new Chart(document.getElementById('cWeek'),{type:'bar',
-    data:{labels:w.labels,datasets:[{data:w.vals,backgroundColor:'rgba(127,119,221,.55)',borderColor:'#7F77DD',borderWidth:1.5,borderRadius:6,maxBarThickness:34}]},
+    data:{labels:w.labels,datasets:[{data:w.vals,backgroundColor:cssv('--chart-bar'),borderColor:cssv('--chart-line'),borderWidth:1.5,borderRadius:6,maxBarThickness:34}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
-      scales:{y:{beginAtZero:true,ticks:{stepSize:5,color:'#888780',font:{size:10}},grid:{color:'rgba(0,0,0,.05)'}},
-      x:{ticks:{color:'#888780',font:{size:10}},grid:{display:false}}}}});
+      scales:{y:{beginAtZero:true,ticks:{stepSize:5,color:cssv('--chart-tick'),font:{size:10}},grid:{color:cssv('--chart-grid')}},
+      x:{ticks:{color:cssv('--chart-tick'),font:{size:10}},grid:{display:false}}}}});
   cRadar=new Chart(document.getElementById('cRadar'),{type:'radar',
     data:{labels:data.categories.map(c=>c.icon+c.name.slice(0,2)),
-      datasets:[{data:data.categories.map(()=>0),borderColor:'#7F77DD',backgroundColor:'rgba(127,119,221,.18)',pointBackgroundColor:'#D4537E',pointRadius:3.5,borderWidth:2}]},
+      datasets:[{data:data.categories.map(()=>0),borderColor:cssv('--chart-line'),backgroundColor:'rgba(143,135,232,.15)',pointBackgroundColor:cssv('--chart-accent'),pointRadius:3.5,borderWidth:2}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
-      scales:{r:{min:0,max:100,ticks:{stepSize:25,display:false},grid:{color:'rgba(0,0,0,.08)'},
-        angleLines:{color:'rgba(0,0,0,.08)'},pointLabels:{color:'#5F5E5A',font:{size:10}}}}}});
+      scales:{r:{min:0,max:100,ticks:{stepSize:25,display:false},grid:{color:cssv('--chart-grid')},
+        angleLines:{color:cssv('--chart-grid')},pointLabels:{color:cssv('--tx2'),font:{size:10}}}}}});
   cMood=new Chart(document.getElementById('cMood'),{type:'line',
     data:{labels:w.labels,datasets:[
-      {label:'完成率%',data:w.rates,borderColor:'#7F77DD',backgroundColor:'rgba(127,119,221,.12)',fill:true,tension:.35,pointRadius:3,yAxisID:'y'},
-      {label:'心情',data:w.moods,borderColor:'#D4537E',borderDash:[4,3],tension:.35,pointRadius:3,spanGaps:true,yAxisID:'y1'}
+      {label:'完成率%',data:w.rates,borderColor:cssv('--chart-line'),backgroundColor:'rgba(143,135,232,.12)',fill:true,tension:.35,pointRadius:3,yAxisID:'y'},
+      {label:'心情',data:w.moods,borderColor:cssv('--chart-accent'),borderDash:[4,3],tension:.35,pointRadius:3,spanGaps:true,yAxisID:'y1'}
     ]},
     options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:true,labels:{boxWidth:8,font:{size:10},color:'#8B7D70'}}},
-      scales:{y:{beginAtZero:true,max:100,ticks:{color:'#888780',font:{size:10}},grid:{color:'rgba(0,0,0,.05)'}},
+      plugins:{legend:{display:true,labels:{boxWidth:8,font:{size:10},color:cssv('--tx2')}}},
+      scales:{y:{beginAtZero:true,max:100,ticks:{color:cssv('--chart-tick'),font:{size:10}},grid:{color:cssv('--chart-grid')}},
         y1:{position:'right',beginAtZero:true,max:100,grid:{display:false},ticks:{display:false}},
-        x:{ticks:{color:'#888780',font:{size:10}},grid:{display:false}}}}});
+        x:{ticks:{color:cssv('--chart-tick'),font:{size:10}},grid:{display:false}}}}});
   updateCharts();
 }
 function updateCharts(){
@@ -930,7 +1022,7 @@ function updateCharts(){
 function renderHeat(){
   const keys=[...Array(7)].map((_,i)=>dayKeyAgo(6-i));
   const names=keys.map(k=>['日','一','二','三','四','五','六'][new Date(k+'T00:00:00').getDay()]);
-  const col=p=>p===null?'#F1EFE8':p===0?'#F1EFE8':p<40?'#CECBF6':p<70?'#AFA9EC':p<100?'#7F77DD':'#534AB7';
+  const col=p=>{if(p===null||p===0)return cssv('--hm0');if(p<40)return cssv('--hm1');if(p<70)return cssv('--hm2');if(p<100)return cssv('--hm3');return cssv('--hm4');};
   let html=`<div class="hm-head"><span></span>${names.map(n=>`<span>${n}</span>`).join('')}</div>`;
   html+=data.categories.map(c=>`
     <div class="hm-row"><div class="hm-lb">${c.icon} ${c.name}</div>
@@ -939,7 +1031,7 @@ function renderHeat(){
         if(k===todayKey()){const st=catStats(c);p=st.total?st.pct:null;}
         else{const h=data.history[k];if(h&&h.perCat&&h.perCat[c.id]&&h.perCat[c.id].total)p=Math.round(h.perCat[c.id].done/h.perCat[c.id].total*100);}
         const txt=p===null?'·':(p===100?'★':p);
-        return `<div class="hm-cell" style="background:${col(p)};${p===null||p===0?'color:#B4B2A9;':''}" title="${k} ${c.name} ${p===null?'无记录':p+'%'}">${txt}</div>`;
+        return `<div class="hm-cell" style="background:${col(p)};${p===null||p===0?'color:var(--tx2);':''}" title="${k} ${c.name} ${p===null?'无记录':p+'%'}">${txt}</div>`;
       }).join('')}</div>
     </div>`).join('');
   document.getElementById('heat').innerHTML=html;
@@ -1067,7 +1159,11 @@ function saveMonthTheme(){
   toast('本月主题已保存');
 }
 document.querySelectorAll('.skin-dot').forEach(s=>s.onclick=()=>{
-  data.theme=s.dataset.skin;persist();renderHeader();toast('已换肤');
+  data.theme=s.dataset.skin;persist();renderHeader();
+  if(chartsReady){if(cWeek)cWeek.destroy();if(cRadar)cRadar.destroy();if(cMood)cMood.destroy();cWeek=cRadar=cMood=null;chartsReady=false;}
+  renderHeat();
+  if(document.getElementById('p-stats').classList.contains('on'))initCharts();
+  toast('已换肤 · '+s.title);
 });
 document.getElementById('monthTheme').addEventListener('change',e=>{
   data.monthTheme=e.target.value.trim();persist();renderHeader();
