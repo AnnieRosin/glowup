@@ -219,6 +219,75 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-
   body{padding:10px}
   .brand h1{font-size:19px}
 }
+
+/* ---------- 独特设计：开场仪式 / 命运卡 / 星座图 / 时光信箱 ---------- */
+.intro{position:fixed;inset:0;z-index:999;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at 30% 20%,#3C3489 0%,#2A2468 45%,#151035 100%);
+  opacity:0;pointer-events:none;transition:opacity .6s}
+.intro.on{opacity:1;pointer-events:auto}
+.intro-stars{position:absolute;inset:0;overflow:hidden}
+.intro-star{position:absolute;background:#fff;border-radius:50%;animation:twinkle 3s ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:.2}50%{opacity:1}}
+.intro-box{position:relative;text-align:center;color:#F5F2FF;padding:20px;max-width:540px;z-index:1}
+.intro-ep{font-size:11px;letter-spacing:4px;color:#9C93E8;margin-bottom:12px}
+.intro-hi{font-size:14px;letter-spacing:2px;opacity:.8;margin-bottom:16px}
+.intro-title{font-size:27px;font-weight:600;margin-bottom:24px;letter-spacing:2px}
+.intro-line{font-size:15px;line-height:1.9;min-height:58px;color:#E4DEFF}
+.intro-line .caret{display:inline-block;width:2px;height:15px;background:#CECBF6;vertical-align:-2px;margin-left:2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.intro-btn{margin-top:26px;background:linear-gradient(135deg,#7F77DD,#D4537E);color:#fff;border:none;border-radius:999px;
+  padding:12px 40px;font-size:14px;cursor:pointer;letter-spacing:3px;font-family:inherit;
+  opacity:0;transform:translateY(10px);transition:all .5s;box-shadow:0 6px 24px rgba(127,119,221,.45)}
+.intro-btn.show{opacity:1;transform:none}
+.intro-skip{position:absolute;top:18px;right:22px;color:rgba(255,255,255,.4);font-size:11px;cursor:pointer;z-index:2}
+
+.fate-wrap{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.fate-card{width:118px;height:164px;perspective:800px;cursor:pointer;flex-shrink:0}
+.fate-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .8s cubic-bezier(.2,.7,.3,1)}
+.fate-card.open .fate-inner{transform:rotateY(180deg)}
+.fate-face{position:absolute;inset:0;border-radius:14px;backface-visibility:hidden;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:7px;padding:12px;text-align:center}
+.fate-back{background:linear-gradient(160deg,#3C3489,#7F77DD 55%,#D4537E);color:#fff;box-shadow:0 6px 18px rgba(60,52,137,.35)}
+.fate-back .fb-sun{font-size:26px}
+.fate-back .fb-t{font-size:11px;letter-spacing:3px;opacity:.9}
+.fate-front{background:linear-gradient(160deg,#FFFFFF,#F3F0FF);transform:rotateY(180deg);border:1px solid rgba(127,119,221,.35)}
+.fate-front .ff-e{font-size:30px}
+.fate-front .ff-n{font-size:13px;font-weight:600;color:var(--a4)}
+.fate-front .ff-m{font-size:10.5px;color:var(--tx2);line-height:1.6}
+.fate-txt{flex:1;min-width:200px}
+.fate-txt .ft-k{font-size:11px;letter-spacing:2px;color:var(--b3);margin-bottom:6px}
+.fate-txt .ft-m{font-size:13px;color:var(--tx);line-height:1.8}
+.fate-txt .ft-s{font-size:11px;color:var(--tx2);margin-top:10px}
+
+.sky-box{position:relative;border-radius:16px;overflow:hidden;
+  background:radial-gradient(ellipse at 65% 25%,#3C3489 0%,#272058 45%,#141031 100%)}
+#skyCanvas{display:block;width:100%;height:320px}
+.sky-info{position:absolute;left:16px;top:14px;color:#CFC9F5;font-size:11px;letter-spacing:1px;line-height:1.9;pointer-events:none}
+.sky-legend{position:absolute;right:14px;top:14px;color:rgba(255,255,255,.5);font-size:10px;text-align:right;line-height:1.9;pointer-events:none}
+.sky-name{position:absolute;right:14px;bottom:12px;display:flex;gap:6px;align-items:center}
+.sky-name input{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#F0EDFF;border-radius:999px;
+  padding:5px 12px;font-size:11px;width:150px;font-family:inherit;outline:none}
+.sky-name input::placeholder{color:rgba(240,237,255,.45)}
+.sky-name button{background:rgba(255,255,255,.16);border:none;color:#fff;border-radius:999px;padding:5px 12px;font-size:11px;cursor:pointer;font-family:inherit}
+
+.env-row{display:flex;gap:12px;flex-wrap:wrap}
+.env{position:relative;background:linear-gradient(150deg,#FDF8F0,#F6EDFF);border:1px solid rgba(127,119,221,.25);
+  border-radius:14px;padding:16px 16px 14px;min-width:200px;flex:1;max-width:260px}
+.env .e-seal{position:absolute;right:12px;top:12px;font-size:18px}
+.env .e-d{font-size:10px;color:var(--tx2);letter-spacing:1px}
+.env .e-t{font-size:12px;color:var(--tx);line-height:1.7;margin:8px 0 10px;max-height:76px;overflow:hidden;
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;word-break:break-all}
+.env .e-c{font-size:11px;color:var(--a4);font-weight:600}
+.env.opened{background:linear-gradient(150deg,#FFF7FA,#FDF3D8);border-color:rgba(212,83,126,.35)}
+.env .e-btn{margin-top:10px;width:100%;border:none;border-radius:999px;padding:7px 0;font-size:11px;cursor:pointer;font-family:inherit;
+  background:var(--a3);color:#fff}
+.env.opened .e-btn{background:var(--b3)}
+.cd-row{display:flex;gap:10px;flex-wrap:wrap}
+.cd{background:linear-gradient(135deg,var(--a1),var(--b1));border-radius:14px;padding:14px 18px;min-width:130px;text-align:center;flex:1;position:relative}
+.cd .c-t{font-size:12px;color:var(--tx2);word-break:break-all}
+.cd .c-n{font-size:24px;font-weight:600;color:var(--a4)}
+.cd .c-s{font-size:10px;color:var(--tx2)}
+.cd .c-x{position:absolute;top:6px;right:8px;border:none;background:none;color:var(--tx2);cursor:pointer;font-size:11px}
 </style>
 </head>
 <body data-skin="sakura">
@@ -252,6 +321,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-
 
   <div class="tabs">
     <div class="tab on" data-tab="today">今日</div>
+    <div class="tab" data-tab="sky">星图</div>
     <div class="tab" data-tab="stats">数据</div>
     <div class="tab" data-tab="reward">奖励</div>
     <div class="tab" data-tab="journal">手帐</div>
@@ -280,6 +350,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-
     </div>
 
     <div class="card">
+      <div class="card-h"><div class="card-t">🔮 今日命运指引</div><span class="hint">每天一张 · 抽到什么就是什么</span></div>
+      <div class="fate-wrap" id="fateWrap"></div>
+    </div>
+
+    <div class="card">
       <div class="card-h"><div class="card-t">🎯 今日三件最重要的事</div><span class="hint">只写三件，其他的都不算今天</span></div>
       <div class="top3-row" id="top3"></div>
     </div>
@@ -300,6 +375,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-
     <div class="quote-box">
       <div class="lb">💫 今日鼓励语</div>
       <div class="tx" id="encourage"></div>
+    </div>
+  </div>
+
+  <!-- 星图 -->
+  <div class="panel" id="p-sky">
+    <div class="card">
+      <div class="card-h"><div class="card-t">🌌 我的星座图</div><span class="hint">每完成一个任务点亮一颗星 · 每 7 颗连成一个星座</span></div>
+      <div class="sky-box">
+        <canvas id="skyCanvas" width="900" height="320"></canvas>
+        <div class="sky-info" id="skyInfo"></div>
+        <div class="sky-legend">✦ 今天亮的星<br>✧ 过往攒下的光</div>
+        <div class="sky-name">
+          <input id="skyName" placeholder="给你的星座起个名字…" maxlength="10">
+          <button onclick="saveSkyName()">命名</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -376,6 +467,28 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-
       <div class="wall" id="wall"></div>
     </div>
     <div class="card">
+      <div class="card-h"><div class="card-t">💌 时光信箱</div><span class="hint">写给未来的自己，时间到了才能拆</span></div>
+      <div class="addrow" style="flex-wrap:wrap">
+        <input id="letterText" placeholder="对未来的自己说点什么…" style="flex:1;min-width:180px">
+        <select id="letterDays" style="border:none;background:rgba(255,255,255,.75);border-radius:10px;padding:8px 10px;font-size:12px;font-family:inherit;color:var(--tx)">
+          <option value="7">7 天后</option>
+          <option value="30" selected>30 天后</option>
+          <option value="100">100 天后</option>
+        </select>
+        <button onclick="sealLetter()">封存 ✉️</button>
+      </div>
+      <div class="env-row" id="envRow" style="margin-top:12px"></div>
+    </div>
+    <div class="card">
+      <div class="card-h"><div class="card-t">⏳ 重要倒计时</div><span class="hint">生日、考试、旅行……期待要有地方放</span></div>
+      <div class="addrow">
+        <input id="cdTitle" placeholder="事件名称，如：生日 🎂">
+        <input id="cdDate" type="date" style="max-width:160px">
+        <button onclick="addCountdown()">添加</button>
+      </div>
+      <div class="cd-row" id="cdRow" style="margin-top:12px"></div>
+    </div>
+    <div class="card">
       <div class="card-h"><div class="card-t">🌙 月度主题</div><span class="hint">这个月只主攻一件事</span></div>
       <div class="addrow">
         <input id="themeInput" placeholder="例如：11月 → 睡眠月（23:30 前睡）">
@@ -404,6 +517,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-
       <button class="s" onclick="closeModal()">取消</button>
       <button class="p" onclick="saveSched()">保存</button>
     </div>
+  </div>
+</div>
+
+<div class="intro" id="intro">
+  <div class="intro-stars" id="introStars"></div>
+  <div class="intro-skip" onclick="closeIntro()">跳过 ›</div>
+  <div class="intro-box">
+    <div class="intro-ep" id="introEp"></div>
+    <div class="intro-hi" id="introHi"></div>
+    <div class="intro-title">✨ GlowUp · 今日开拍</div>
+    <div class="intro-line" id="introLine"></div>
+    <button class="intro-btn" id="introBtn" onclick="closeIntro()">开始今天的一天</button>
   </div>
 </div>
 
@@ -457,7 +582,8 @@ function defaultData(){
     makeup:2,makeupMonth:monthKey(),
     categories:META.map(m=>({...m,items:TPL[m.id].map(n=>({name:n,done:false})),open:false})),
     schedules:[],top3:['','',''],history:{},cards:[],badges:[],
-    rewards:JSON.parse(JSON.stringify(DEF_REWARDS)),redemptions:[],lastDate:null};
+    rewards:JSON.parse(JSON.stringify(DEF_REWARDS)),redemptions:[],lastDate:null,
+    fate:{date:null,idx:null},letters:[],countdowns:[],constellationName:'',introDate:''};
 }
 function monthKey(){const d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1);}
 function ds(d){const x=new Date(d);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');}
@@ -489,6 +615,9 @@ function migrate(){
   return d;
 }
 let data=migrate();
+data.fate=data.fate||{date:null,idx:null};
+data.letters=data.letters||[];data.countdowns=data.countdowns||[];
+data.constellationName=data.constellationName||'';data.introDate=data.introDate||'';
 
 // 新的一天：归档 + 重置
 (function rollDay(){
@@ -947,15 +1076,202 @@ document.getElementById('themeInput').addEventListener('input',e=>{
   document.getElementById('themeEcho').textContent=e.target.value?'（记得点保存）本月主题：'+e.target.value:'';
 });
 
+/* ---------- 独特设计 1：开场仪式 · 今日剧本 ---------- */
+function hashDay(k){let h=0;for(let i=0;i<k.length;i++)h=(h*31+k.charCodeAt(i))>>>0;return h;}
+function episodeNo(){return Object.keys(data.history).length+1;}
+const SCRIPTS=[
+  '主角不会在第三章弃剧，今晚也不行。',
+  '今天这一集，叫「悄悄变好」。',
+  '镜头正在拍你，演好眼前这一幕就够了。',
+  '女主角的日常：把小事做好，把光攒起来。',
+  '剧情提示：本集看点是早点睡。',
+  '你不用每集都高光，存在本身就是剧情。',
+  '编剧（你自己）说了：这一集要为自己活。',
+  '本集彩蛋：坚持的人会先尝到结局的甜。',
+  '哪怕是慢镜头，也在向前走。',
+  '今天的关键词，是「值得」。',
+  '别的剧本在赶工，你的剧本在生长。',
+  '下一集预告里，有你想要的样子。'
+];
+function closeIntro(){document.getElementById('intro').classList.remove('on');}
+function playIntro(){
+  if(data.introDate===todayKey())return;
+  data.introDate=todayKey();persist();
+  const h=new Date().getHours();
+  const hi=h<5?'夜深了，还醒着的你辛苦了':h<9?'早安，新的一天开机了':h<12?'上午好，片场一切正常':h<14?'午安，午间小憩是主角特权':h<18?'下午好，剧情正在推进':h<23?'晚上好，今晚的看点是收尾':'夜深了，记得早点收工';
+  document.getElementById('introHi').textContent=hi;
+  document.getElementById('introEp').textContent='GLOWUP · 第 '+episodeNo()+' 集';
+  let html='';
+  for(let i=0;i<60;i++){const s=Math.random()*2+1;
+    html+='<div class="intro-star" style="left:'+(Math.random()*100)+'%;top:'+(Math.random()*100)+'%;width:'+s+'px;height:'+s+'px;animation-delay:'+(Math.random()*3)+'s"></div>';}
+  document.getElementById('introStars').innerHTML=html;
+  const line=SCRIPTS[hashDay(todayKey())%SCRIPTS.length];
+  const el=document.getElementById('introLine');
+  const btn=document.getElementById('introBtn');btn.classList.remove('show');
+  el.innerHTML='<span class="caret"></span>';
+  document.getElementById('intro').classList.add('on');
+  let i=0;
+  const timer=setInterval(()=>{
+    i++;el.innerHTML=line.slice(0,i)+'<span class="caret"></span>';
+    if(i>=line.length){clearInterval(timer);el.textContent=line;setTimeout(()=>btn.classList.add('show'),350);}
+  },85);
+}
+
+/* ---------- 独特设计 2：每日命运卡 ---------- */
+const FATE=[
+  {e:'🧹',n:'断舍离',m:'扔掉一件不需要的东西吧，房间和心情都会变大。'},
+  {e:'🚶',n:'漫步',m:'今天适合慢慢走一段路，答案会在路上出现。'},
+  {e:'💧',n:'补水',m:'多喝一杯水，皮肤和运气都会变好。'},
+  {e:'📵',n:'离线',m:'睡前一小时放下手机，世界不会错过你什么。'},
+  {e:'🌱',n:'微小的开始',m:'不用做完一整件事，做开头五分钟就够了。'},
+  {e:'📖',n:'阅读',m:'今天适合读几页书，它会变成你说话的底气。'},
+  {e:'💌',n:'表达',m:'把想说的感谢说出口，关系会被这句话点亮。'},
+  {e:'🧘',n:'静心',m:'深呼吸十次，把不属于你的情绪还回去。'},
+  {e:'🎯',n:'专注',m:'今天只挑一件最重要的事，把它做到漂亮。'},
+  {e:'🌙',n:'早睡',m:'今晚早点睡的你，会给明天的你送一份大礼。'},
+  {e:'💪',n:'流汗',m:'动一动，坏情绪会跟着汗水一起蒸发。'},
+  {e:'💰',n:'记账',m:'看一眼账本，未来的你会感谢现在的清醒。'}
+];
+function renderFate(){
+  const w=document.getElementById('fateWrap');
+  const drawn=data.fate.date===todayKey();
+  const card=drawn?FATE[data.fate.idx%FATE.length]:null;
+  if(!drawn){
+    w.innerHTML='<div class="fate-card" id="fateCard" onclick="drawFate()"><div class="fate-inner">'+
+      '<div class="fate-face fate-back"><div class="fb-sun">🔮</div><div class="fb-t">今 日 运 势</div><div style="font-size:10px;opacity:.7">点击抽卡 · 每天一张</div></div>'+
+      '</div></div>'+
+      '<div class="fate-txt"><div class="ft-k">今日命运指引</div><div class="ft-m">深呼吸，心里默念今天最在意的事，然后点它。</div><div class="ft-s">抽出什么就是什么——命运卡不接受重抽哦 😌</div></div>';
+  }else{
+    w.innerHTML='<div class="fate-card open"><div class="fate-inner">'+
+      '<div class="fate-face fate-back"><div class="fb-sun">🔮</div><div class="fb-t">今 日 运 势</div></div>'+
+      '<div class="fate-face fate-front"><div class="ff-e">'+card.e+'</div><div class="ff-n">'+card.n+'</div><div class="ff-m">'+card.m+'</div></div>'+
+      '</div></div>'+
+      '<div class="fate-txt"><div class="ft-k">今天的指引 · '+card.n+'</div><div class="ft-m">'+card.m+'</div><div class="ft-s">今日已抽 · 明天再来</div></div>';
+  }
+}
+function drawFate(){
+  const idx=hashDay(todayKey()+'fate')%FATE.length;
+  data.fate={date:todayKey(),idx};persist();
+  renderFate();confetti(16);toast('命运卡翻开：'+FATE[idx].n);
+}
+
+/* ---------- 独特设计 3：我的星座图 ---------- */
+function totalStarsEver(){
+  let n=0;Object.keys(data.history).forEach(k=>{n+=data.history[k].totalItems||0;});
+  return n+totalDone();
+}
+function srand(i,off){const x=Math.sin(i*127.1+off*311.7)*43758.5453;return x-Math.floor(x);}
+function starPos(i,W,H,pad){return {x:pad+srand(i,1)*(W-pad*2),y:pad+srand(i,2)*(H-pad*2)};}
+let skyStarted=false;
+function renderSkyInfo(){
+  const n=Math.min(totalStarsEver(),300);
+  const con=Math.floor(n/7);
+  document.getElementById('skyInfo').innerHTML=
+    '已点亮 <b style="color:#FFE9A8">'+totalStarsEver()+'</b> 颗星 · 连成 '+con+' 个星座'+
+    (data.constellationName?'<br>星座名：「'+data.constellationName+'」':'');
+  document.getElementById('skyName').value=data.constellationName||'';
+}
+function drawFrame(t){
+  const panel=document.getElementById('p-sky');
+  if(!panel||!panel.classList.contains('on'))return;
+  const cv=document.getElementById('skyCanvas');const ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height;
+  ctx.clearRect(0,0,W,H);
+  const todayN=totalDone();
+  const n=Math.min(totalStarsEver(),300);
+  const oldN=Math.max(0,n-todayN);
+  for(let i=0;i<n;i++){
+    const p=starPos(i,W,H,26);
+    const isToday=i>=oldN;
+    const tw=.5+.5*Math.sin(t/600+i*1.7);
+    ctx.beginPath();
+    ctx.fillStyle=isToday?'rgba(255,235,170,'+(0.7+tw*0.3)+')':'rgba(207,201,245,'+(0.3+tw*0.45)+')';
+    ctx.arc(p.x,p.y,isToday?2.6+tw:1.6+tw*.5,0,7);
+    ctx.fill();
+  }
+  ctx.strokeStyle='rgba(207,201,245,.25)';ctx.lineWidth=1;
+  for(let g=0;g<Math.floor(n/7);g++){
+    const pts=[];
+    for(let j=0;j<7;j++)pts.push(starPos(g*7+j,W,H,26));
+    pts.sort((a,b)=>a.x-b.x);
+    ctx.beginPath();
+    pts.forEach((p,j)=>{j?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y);});
+    ctx.stroke();
+  }
+}
+function startSky(){
+  renderSkyInfo();
+  if(skyStarted)return;skyStarted=true;
+  const loop=(t)=>{try{drawFrame(t);}catch(e){}requestAnimationFrame(loop);};
+  requestAnimationFrame(loop);
+}
+function saveSkyName(){
+  data.constellationName=document.getElementById('skyName').value.trim();
+  persist();renderSkyInfo();toast('星座已命名 ✨');
+}
+
+/* ---------- 独特设计 4：时光信箱 & 倒计时 ---------- */
+function esc(s){return (s||'').replace(/</g,'&lt;');}
+function renderLetters(){
+  const row=document.getElementById('envRow');
+  if(!data.letters.length){row.innerHTML='<div class="empty" style="padding:8px">信箱空空的，写一封给未来的自己吧</div>';return;}
+  row.innerHTML=[...data.letters].reverse().map(L=>{
+    const i=data.letters.indexOf(L);
+    const left=Math.ceil((new Date(L.openDate+'T00:00:00')-new Date(todayKey()+'T00:00:00'))/86400000);
+    const due=left<=0;
+    return '<div class="env '+(L.opened?'opened':'sealed')+'">'+
+      '<div class="e-seal">'+(L.opened?'💌':due?'✂️':'✉️')+'</div>'+
+      '<div class="e-d">'+L.created+' 封存 · '+L.openDate+' 开启</div>'+
+      '<div class="e-t">'+(L.opened?esc(L.text):'（信已封好，时间未到）')+'</div>'+
+      '<div class="e-c">'+(L.opened?'已拆封':due?'可以拆了！':'还有 '+left+' 天')+'</div>'+
+      (due&&!L.opened?'<button class="e-btn" onclick="openLetter('+i+')">拆信 💌</button>':'')+
+      '</div>';
+  }).join('');
+}
+function sealLetter(){
+  const t=document.getElementById('letterText').value.trim();
+  if(!t){toast('先写点内容吧');return;}
+  const days=+document.getElementById('letterDays').value;
+  const d=new Date();d.setDate(d.getDate()+days);
+  data.letters.push({text:t,created:todayKey(),openDate:ds(d),opened:false});
+  persist();document.getElementById('letterText').value='';
+  renderLetters();confetti(14);toast('信已封存，'+days+' 天后见 💌');
+}
+function openLetter(i){
+  data.letters[i].opened=true;persist();renderLetters();confetti(30);
+  toast('来自 '+data.letters[i].created+' 的信 💌');
+}
+function renderCountdowns(){
+  const row=document.getElementById('cdRow');
+  if(!data.countdowns.length){row.innerHTML='<div class="empty" style="padding:8px">加一个值得期待的日子</div>';return;}
+  row.innerHTML=data.countdowns.map((c,i)=>{
+    const left=Math.ceil((new Date(c.date+'T00:00:00')-new Date(todayKey()+'T00:00:00'))/86400000);
+    return '<div class="cd"><button class="c-x" onclick="delCountdown('+i+')">✕</button>'+
+      '<div class="c-t">'+esc(c.title)+'</div>'+
+      '<div class="c-n">'+(left>0?left:'🎉')+'</div>'+
+      '<div class="c-s">'+(left>0?'天 · '+c.date.slice(5):'就在今天！')+'</div></div>';
+  }).join('');
+}
+function addCountdown(){
+  const t=document.getElementById('cdTitle').value.trim();
+  const d=document.getElementById('cdDate').value;
+  if(!t||!d){toast('填上名字和日期');return;}
+  data.countdowns.push({title:t,date:d});persist();
+  document.getElementById('cdTitle').value='';
+  renderCountdowns();toast('已加入倒计时 ⏳');
+}
+function delCountdown(i){data.countdowns.splice(i,1);persist();renderCountdowns();}
+
 /* ---------- 标签页 ---------- */
 document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
   document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
   document.querySelectorAll('.panel').forEach(x=>x.classList.remove('on'));
   t.classList.add('on');
   document.getElementById('p-'+t.dataset.tab).classList.add('on');
+  if(t.dataset.tab==='sky'){startSky();}
   if(t.dataset.tab==='stats'){initCharts();renderRing();renderHeat();weekReport();setTimeout(()=>{if(cWeek)cWeek.resize();if(cRadar)cRadar.resize();if(cMood)cMood.resize();},60);}
   if(t.dataset.tab==='reward'){renderShop();renderBadges();renderStreak();}
-  if(t.dataset.tab==='journal'){renderWall();document.getElementById('themeEcho').textContent=data.monthTheme?'本月主题：'+data.monthTheme:'';}
+  if(t.dataset.tab==='journal'){renderWall();renderLetters();renderCountdowns();document.getElementById('themeEcho').textContent=data.monthTheme?'本月主题：'+data.monthTheme:'';}
 });
 
 /* ---------- 补签 ---------- */
@@ -973,9 +1289,11 @@ function useMakeup(){
 function renderAll(){
   renderHeader();renderMood();renderStreak();renderTop3();renderCats();renderSched();renderEncourage();
   renderRing();renderHeat();weekReport();renderShop();renderBadges();renderWall();updateCharts();
+  renderFate();renderLetters();renderCountdowns();renderSkyInfo();
 }
 document.getElementById('ov').addEventListener('click',e=>{if(e.target.id==='ov')closeModal();});
 renderAll();
+playIntro();
 </script>
 </body>
 </html>
