@@ -74,6 +74,40 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-
 .panel{display:none}
 .panel.on{display:block}
 
+/* ---------- 区块导航 ---------- */
+[id^="sec-"]{scroll-margin-top:76px}
+.rail{position:fixed;top:102px;left:calc(50vw - 692px);width:172px;z-index:48;display:none}
+.rail.hide{display:none!important}
+.rail-hd{display:flex;align-items:center;justify-content:space-between;padding:0 4px 7px;font-size:10px;letter-spacing:2px;color:var(--tx2);opacity:.7}
+.rail-hd button{border:none;background:rgba(127,119,221,.14);color:var(--tx2);width:20px;height:20px;border-radius:50%;cursor:pointer;font-size:12px;line-height:1;font-family:inherit;transition:.2s}
+.rail-hd button:hover{background:rgba(127,119,221,.3);color:var(--tx)}
+.rail-list{display:flex;flex-direction:column;gap:1px;background:var(--card);border:1px solid var(--bd);border-radius:15px;padding:8px 7px;box-shadow:var(--sh)}
+.rail-grp{font-size:9.5px;letter-spacing:1.6px;color:var(--tx2);opacity:.6;padding:9px 8px 3px}
+.rail-grp:first-child{padding-top:3px}
+.rail-item{position:relative;display:flex;align-items:center;gap:7px;width:100%;border:none;background:transparent;color:var(--tx2);font-family:inherit;font-size:12px;text-align:left;padding:6px 8px;border-radius:9px;cursor:pointer;transition:background .2s,color .2s}
+.rail-item:hover{background:rgba(127,119,221,.12);color:var(--tx)}
+.rail-item.on{background:linear-gradient(90deg,rgba(127,119,221,.22),rgba(212,83,126,.14));color:var(--a4);font-weight:600}
+.rail-item.on::before{content:'';position:absolute;left:1px;top:24%;bottom:24%;width:3px;border-radius:2px;background:linear-gradient(var(--a3),var(--b3))}
+.rail-item i{font-style:normal;font-size:12.5px;width:15px;text-align:center;flex-shrink:0}
+.rail-item span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rail-top{margin-top:8px;width:100%;border:1px solid var(--bd);background:transparent;color:var(--tx2);font-family:inherit;font-size:11px;padding:6px;border-radius:10px;cursor:pointer;transition:.2s}
+.rail-top:hover{color:var(--tx);background:rgba(127,119,221,.18)}
+.rail.min{width:auto}
+.rail.min .rail-hd span,.rail.min .rail-list,.rail.min .rail-top{display:none}
+.rail.min .rail-hd{padding:0}
+.rail.min .rail-hd button{width:34px;height:34px;border-radius:12px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);font-size:15px}
+@media(min-width:1400px){.rail:not(.hide){display:block}}
+/* 窄屏：顶部横滑胶囊 */
+.secbar{display:none}
+.secbar.hide{display:none!important}
+.secbar button{flex-shrink:0;border:none;background:rgba(127,119,221,.12);color:var(--tx2);font-family:inherit;font-size:11.5px;padding:6px 11px;border-radius:999px;cursor:pointer;white-space:nowrap;transition:.2s}
+.secbar button:hover{background:rgba(127,119,221,.22);color:var(--tx)}
+.secbar button.on{background:linear-gradient(135deg,var(--a3),var(--b3));color:#fff;font-weight:600}
+@media(max-width:1399px){
+  .secbar:not(.hide){display:flex;gap:6px;overflow-x:auto;padding:7px;margin:-6px 0 14px;position:sticky;top:6px;z-index:45;background:var(--card);border:1px solid var(--bd);border-radius:13px;box-shadow:var(--sh);scrollbar-width:none}
+  .secbar::-webkit-scrollbar{display:none}
+}
+
 .card{background:var(--card);border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:var(--sh);border:1px solid var(--bd)}
 .card-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:8px;flex-wrap:wrap}
 .card-t{font-size:15px;font-weight:600}
@@ -739,9 +773,17 @@ body[data-skin="galaxy"] .fx-fauna i:nth-child(5){top:70vh;left:4vw;animation:no
     <div class="tab" data-tab="journal">手帐</div>
   </div>
 
+  <!-- 区块导航：宽屏=左侧竖栏，窄屏=顶部横滑条 -->
+  <nav class="rail hide" id="rail" aria-label="本页区块导航">
+    <div class="rail-hd"><span>本页导航</span><button id="railTgl" title="收起 / 展开" aria-label="收起导航">–</button></div>
+    <div class="rail-list" id="railList"></div>
+    <button class="rail-top" onclick="secTop()">↑ 回到顶部</button>
+  </nav>
+  <div class="secbar hide" id="secbar"></div>
+
   <!-- 今日 -->
   <div class="panel on" id="p-today">
-    <div class="two">
+    <div class="two" id="sec-mood">
       <div class="mood-card">
         <div class="label" style="color:var(--a4)">今日心情</div>
         <div class="mood-row" id="moods">
@@ -761,22 +803,22 @@ body[data-skin="galaxy"] .fx-fauna i:nth-child(5){top:70vh;left:4vw;animation:no
       </div>
     </div>
 
-    <div class="card">
+    <div class="card" id="sec-fate">
       <div class="card-h"><div class="card-t">🔮 今日命运指引</div><span class="hint">每天一张 · 抽到什么就是什么</span></div>
       <div class="fate-wrap" id="fateWrap"></div>
     </div>
 
-    <div class="card">
+    <div class="card" id="sec-top3">
       <div class="card-h"><div class="card-t">🎯 今日三件最重要的事</div><span class="hint">只写三件，其他的都不算今天</span></div>
       <div class="top3-row" id="top3"></div>
     </div>
 
-    <div class="card">
+    <div class="card" id="sec-cats">
       <div class="card-h"><div class="card-t">🌸 成长板块</div><span class="hint">点开板块勾选 · 每周目标按「达标天数」算</span></div>
       <div class="grid2" id="cats"></div>
     </div>
 
-    <div class="card">
+    <div class="card" id="sec-sched">
       <div class="card-h"><div class="card-t">📅 今日日程</div><button class="btn" onclick="openModal()">+ 加日程</button></div>
       <div class="tl-wrap">
         <div class="tl" id="timeline"></div>
@@ -784,7 +826,7 @@ body[data-skin="galaxy"] .fx-fauna i:nth-child(5){top:70vh;left:4vw;animation:no
       </div>
     </div>
 
-    <div class="quote-box">
+    <div class="quote-box" id="sec-quote">
       <div class="lb">💫 今日鼓励语</div>
       <div class="tx" id="encourage"></div>
     </div>
@@ -792,7 +834,7 @@ body[data-skin="galaxy"] .fx-fauna i:nth-child(5){top:70vh;left:4vw;animation:no
 
   <!-- 星图 -->
   <div class="panel" id="p-sky">
-    <div class="card">
+    <div class="card" id="sec-sky">
       <div class="card-h"><div class="card-t">🌌 我的星座图</div><span class="hint">每完成一个任务点亮一颗星 · 每 7 颗连成一个星座</span></div>
       <div class="sky-box">
         <canvas id="skyCanvas" width="900" height="320"></canvas>
@@ -808,7 +850,7 @@ body[data-skin="galaxy"] .fx-fauna i:nth-child(5){top:70vh;left:4vw;animation:no
 
   <!-- 数据 -->
   <div class="panel" id="p-stats">
-    <div class="card">
+    <div class="card" id="sec-week">
       <div class="card-h"><div class="card-t">📊 本周完成</div><span class="hint">柱=每日完成子任务数</span></div>
       <div class="grid4">
         <div class="chart"><canvas id="cWeek"></canvas></div>
@@ -820,7 +862,7 @@ body[data-skin="galaxy"] .fx-fauna i:nth-child(5){top:70vh;left:4vw;animation:no
       </div>
     </div>
 
-    <div class="card">
+    <div class="card" id="sec-board">
       <div class="card-h"><div class="card-t">📈 板块进度可视化</div><span class="hint">雷达=本周均值 · 热力图=近7天（★=满分）</span></div>
       <div class="grid4">
         <div class="chart" style="height:290px"><canvas id="cRadar"></canvas></div>
@@ -828,17 +870,17 @@ body[data-skin="galaxy"] .fx-fauna i:nth-child(5){top:70vh;left:4vw;animation:no
       </div>
     </div>
 
-    <div class="card">
+    <div class="card" id="sec-moodchart">
       <div class="card-h"><div class="card-t">💗 心情与完成度</div><span class="hint">看哪天心情低就练不动</span></div>
       <div class="chart"><canvas id="cMood"></canvas></div>
     </div>
 
-    <div class="card">
+    <div class="card" id="sec-pk">
       <div class="card-h"><div class="card-t">⚔️ 本周的我 vs 上周的我</div><span class="hint">唯一的对手是昨天的自己</span></div>
       <div class="pk-wrap" id="pkWrap"></div>
     </div>
 
-    <div class="card">
+    <div class="card" id="sec-report">
       <div class="card-h"><div class="card-t">📝 本周自动周报</div><span class="hint">每周一自动换新</span></div>
       <div class="report" id="report"></div>
     </div>
@@ -846,7 +888,7 @@ body[data-skin="galaxy"] .fx-fauna i:nth-child(5){top:70vh;left:4vw;animation:no
 
   <!-- 奖励 -->
   <div class="panel" id="p-reward">
-    <div class="card">
+    <div class="card" id="sec-shop">
       <div class="card-h">
         <div class="card-t">🎁 星光商店</div>
         <div style="display:flex;gap:8px;align-items:center">
@@ -858,12 +900,12 @@ body[data-skin="galaxy"] .fx-fauna i:nth-child(5){top:70vh;left:4vw;animation:no
       <div class="hint" style="margin-top:10px">每完成一个子任务 +5 分 · 清空一个板块 +25 分 · 完成日程 +5 分</div>
     </div>
 
-    <div class="card">
+    <div class="card" id="sec-badges">
       <div class="card-h"><div class="card-t">🏆 成就徽章</div><span class="hint" id="badgeCnt"></span></div>
       <div class="badges" id="badges"></div>
     </div>
 
-    <div class="card">
+    <div class="card" id="sec-guard">
       <div class="card-h"><div class="card-t">🛟 补签卡 & ✨ 星光守护</div><span class="hint">连续记录的两大保险</span></div>
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
         <div style="font-size:13px" id="mkInfo"></div>
@@ -875,7 +917,7 @@ body[data-skin="galaxy"] .fx-fauna i:nth-child(5){top:70vh;left:4vw;animation:no
       </div>
     </div>
 
-    <div class="card">
+    <div class="card" id="sec-log">
       <div class="card-h"><div class="card-t">🧾 兑换记录</div><span class="hint">奖励自己，是自律的一部分</span></div>
       <div class="log" id="log"></div>
     </div>
@@ -883,11 +925,11 @@ body[data-skin="galaxy"] .fx-fauna i:nth-child(5){top:70vh;left:4vw;animation:no
 
   <!-- 手帐 -->
   <div class="panel" id="p-journal">
-    <div class="card">
+    <div class="card" id="sec-wall">
       <div class="card-h"><div class="card-t">🧸 成就卡片墙</div><span class="hint">每天全清解锁一张，可写下当天的一句话</span></div>
       <div class="wall" id="wall"></div>
     </div>
-    <div class="card">
+    <div class="card" id="sec-letter">
       <div class="card-h"><div class="card-t">💌 时光信箱</div><span class="hint">写给未来的自己，时间到了才能拆</span></div>
       <div class="addrow" style="flex-wrap:wrap">
         <input id="letterText" placeholder="对未来的自己说点什么…" style="flex:1;min-width:180px">
@@ -900,7 +942,7 @@ body[data-skin="galaxy"] .fx-fauna i:nth-child(5){top:70vh;left:4vw;animation:no
       </div>
       <div class="env-row" id="envRow" style="margin-top:12px"></div>
     </div>
-    <div class="card">
+    <div class="card" id="sec-cd">
       <div class="card-h"><div class="card-t">⏳ 重要倒计时</div><span class="hint">生日、考试、旅行……期待要有地方放</span></div>
       <div class="addrow">
         <input id="cdTitle" placeholder="事件名称，如：生日 🎂">
@@ -909,7 +951,7 @@ body[data-skin="galaxy"] .fx-fauna i:nth-child(5){top:70vh;left:4vw;animation:no
       </div>
       <div class="cd-row" id="cdRow" style="margin-top:12px"></div>
     </div>
-    <div class="card">
+    <div class="card" id="sec-theme">
       <div class="card-h"><div class="card-t">🌙 月度主题</div><span class="hint">这个月只主攻一件事</span></div>
       <div class="addrow">
         <input id="themeInput" placeholder="例如：11月 → 睡眠月（23:30 前睡）">
@@ -1721,12 +1763,91 @@ function addCountdown(){
 }
 function delCountdown(i){data.countdowns.splice(i,1);persist();renderCountdowns();}
 
+/* ---------- 区块导航（把每个标签页拆块，减少下滑） ---------- */
+const SECS={
+  today:[
+    {g:'状态',items:[['sec-mood','🌤','心情 & 连续'],['sec-fate','🔮','命运指引']]},
+    {g:'行动',items:[['sec-top3','🎯','三件最重要的事'],['sec-cats','🌸','成长板块'],['sec-sched','📅','今日日程']]},
+    {g:'收尾',items:[['sec-quote','💫','今日鼓励语']]}
+  ],
+  stats:[
+    {g:'概览',items:[['sec-week','📊','本周完成'],['sec-board','📈','板块进度']]},
+    {g:'洞察',items:[['sec-moodchart','💗','心情曲线'],['sec-pk','⚔️','本周 vs 上周'],['sec-report','📝','自动周报']]}
+  ],
+  reward:[
+    {g:'获取',items:[['sec-shop','🎁','星光商店']]},
+    {g:'荣誉',items:[['sec-badges','🏆','成就徽章']]},
+    {g:'保障',items:[['sec-guard','🛟','补签 & 守护']]},
+    {g:'记录',items:[['sec-log','🧾','兑换记录']]}
+  ],
+  journal:[
+    {g:'回顾',items:[['sec-wall','🧸','成就卡片墙'],['sec-letter','💌','时光信箱']]},
+    {g:'规划',items:[['sec-cd','⏳','重要倒计时'],['sec-theme','🌙','月度主题']]}
+  ]
+};
+function renderSecNav(tab){
+  const gs=SECS[tab]||[];
+  const rail=document.getElementById('rail'),list=document.getElementById('railList'),bar=document.getElementById('secbar');
+  if(!rail||!list||!bar)return;
+  if(!gs.length){rail.classList.add('hide');bar.classList.add('hide');return;}
+  let rh='',bh='';
+  gs.forEach(g=>{
+    rh+=`<div class="rail-grp">${g.g}</div>`;
+    g.items.forEach(([id,ic,lb])=>{
+      rh+=`<button class="rail-item" data-t="${id}"><i>${ic}</i><span>${lb}</span></button>`;
+      bh+=`<button data-t="${id}">${ic} ${lb}</button>`;
+    });
+  });
+  list.innerHTML=rh;bar.innerHTML=bh;
+  rail.classList.remove('hide');bar.classList.remove('hide');
+  secSpy();
+}
+function secJump(id){
+  const el=document.getElementById(id);if(!el)return;
+  const off=innerWidth<1400?64:20;
+  const y=el.getBoundingClientRect().top+scrollY-off;
+  secPin=true;
+  scrollTo({top:Math.max(0,y),behavior:'smooth'});
+  setActive(id);
+}
+function secTop(){secPin=true;scrollTo({top:0,behavior:'smooth'});setTimeout(()=>secPin=false,700);}
+function setActive(id){
+  document.querySelectorAll('.rail-item,.secbar button').forEach(b=>b.classList.toggle('on',b.dataset.t===id));
+}
+let secTick=false,secPin=false;
+function secSpy(){
+  if(secPin)return;
+  const t=document.querySelector('.tab.on');
+  const gs=SECS[t?t.dataset.tab:'']||[];
+  if(!gs.length)return;
+  const ids=gs.reduce((a,g)=>a.concat(g.items.map(i=>i[0])),[]);
+  const line=innerHeight*0.34;
+  let act=ids[0];
+  ids.forEach(id=>{const el=document.getElementById(id);if(el&&el.getBoundingClientRect().top<=line)act=id;});
+  if(innerHeight+scrollY>=document.body.scrollHeight-2)act=ids[ids.length-1];
+  setActive(act);
+}
+document.getElementById('railList').onclick=document.getElementById('secbar').onclick=e=>{
+  const b=e.target.closest('[data-t]');if(b)secJump(b.dataset.t);
+};
+addEventListener('scroll',()=>{if(secTick)return;secTick=true;requestAnimationFrame(()=>{secTick=false;secSpy();});},{passive:true});
+['wheel','touchstart','keydown'].forEach(ev=>addEventListener(ev,()=>{secPin=false;},{passive:true}));
+(function(){
+  const rail=document.getElementById('rail'),btn=document.getElementById('railTgl');
+  if(!rail||!btn)return;
+  const setMin=m=>{rail.classList.toggle('min',m);btn.textContent=m?'≡':'–';btn.title=m?'展开导航':'收起导航';};
+  setMin(localStorage.getItem('glowupRail')==='min');
+  btn.onclick=e=>{e.stopPropagation();const m=!rail.classList.contains('min');setMin(m);localStorage.setItem('glowupRail',m?'min':'open');};
+})();
+
 /* ---------- 标签页 ---------- */
 document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
   document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
   document.querySelectorAll('.panel').forEach(x=>x.classList.remove('on'));
   t.classList.add('on');
   document.getElementById('p-'+t.dataset.tab).classList.add('on');
+  scrollTo({top:0,behavior:'auto'});
+  renderSecNav(t.dataset.tab);
   if(t.dataset.tab==='sky'){startSky();}
   if(t.dataset.tab==='stats'){initCharts();renderRing();renderHeat();weekReport();renderPK();setTimeout(()=>{if(cWeek)cWeek.resize();if(cRadar)cRadar.resize();if(cMood)cMood.resize();},60);}
   if(t.dataset.tab==='reward'){renderShop();renderBadges();renderStreak();}
@@ -1880,6 +2001,7 @@ function renderAll(){
 }
 document.getElementById('ov').addEventListener('click',e=>{if(e.target.id==='ov')closeModal();});
 renderAll();
+renderSecNav('today');
 playIntro();
 // 小星灵开场问候
 setTimeout(()=>{
