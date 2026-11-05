@@ -662,6 +662,37 @@ body[data-skin="galaxy"] .fx-fauna i:nth-child(4){top:48vh;left:88vw;animation:n
 body[data-skin="galaxy"] .fx-fauna i:nth-child(5)::before{content:'🌙';font-size:24px;opacity:.85;animation:hoverBob 5s ease-in-out infinite alternate}
 body[data-skin="galaxy"] .fx-fauna i:nth-child(5){top:70vh;left:4vw;animation:none}
 
+/* ---------- 小星灵吉祥物 ---------- */
+.mascot{position:fixed;right:18px;bottom:18px;z-index:60;display:flex;flex-direction:column;align-items:center;cursor:pointer;user-select:none}
+.m-bubble{position:absolute;bottom:calc(100% + 10px);right:0;width:210px;background:#fff;color:#4a4463;border-radius:14px 14px 4px 14px;padding:10px 12px;font-size:12.5px;line-height:1.55;box-shadow:0 8px 24px rgba(30,20,80,.28);opacity:0;transform:translateY(6px) scale(.92);transform-origin:bottom right;transition:all .28s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
+.m-bubble.on{opacity:1;transform:translateY(0) scale(1)}
+.m-bubble::after{content:'';position:absolute;bottom:-6px;right:22px;border:7px solid transparent;border-top-color:#fff;border-bottom:none}
+.m-avatar{position:relative;width:62px;height:62px;filter:drop-shadow(0 6px 14px rgba(255,210,90,.45));transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+.mascot:hover .m-avatar{transform:scale(1.08) rotate(-4deg)}
+.m-avatar svg{width:100%;height:100%}
+.m-avatar.bounce{animation:mBounce .55s cubic-bezier(.34,1.56,.64,1)}
+@keyframes mBounce{0%{transform:scale(1)}35%{transform:scale(1.18,.86)}65%{transform:scale(.92,1.12) translateY(-10px)}100%{transform:scale(1)}}
+.m-name{margin-top:3px;font-size:10px;color:var(--tx2);opacity:.85;letter-spacing:1px}
+/* 进化光环 */
+.m-evo1 .m-avatar::after,.m-evo2 .m-avatar::after{content:'';position:absolute;inset:-8px;border-radius:50%;border:2px dashed rgba(255,215,120,.75);animation:spin 9s linear infinite}
+.m-evo2 .m-avatar::before{content:'👑';position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:19px;animation:hoverBob 2.4s ease-in-out infinite alternate;z-index:2}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* 连击浮标 */
+.combo-pop{position:fixed;right:96px;bottom:64px;z-index:59;pointer-events:none;font-weight:900;font-size:22px;color:#FFD866;text-shadow:0 0 14px rgba(255,190,60,.9),0 2px 6px rgba(0,0,0,.35);opacity:0;transform:scale(.4)}
+.combo-pop.go{animation:comboGo 1.1s cubic-bezier(.22,1.4,.36,1) forwards}
+.combo-pop.hot{color:#FF9A62;text-shadow:0 0 18px rgba(255,120,40,.95),0 2px 6px rgba(0,0,0,.35)}
+@keyframes comboGo{0%{opacity:0;transform:scale(.4) rotate(-8deg)}25%{opacity:1;transform:scale(1.25) rotate(3deg)}55%{transform:scale(1) rotate(-2deg)}80%{opacity:1}100%{opacity:0;transform:scale(1.05) translateY(-26px)}}
+/* 本周PK */
+.pk-wrap{display:flex;flex-direction:column;gap:10px;padding:4px 0}
+.pk-row{display:flex;align-items:center;gap:10px}
+.pk-label{width:88px;font-size:12px;color:var(--tx2);flex-shrink:0;text-align:right}
+.pk-track{flex:1;height:26px;background:rgba(128,120,180,.14);border-radius:13px;overflow:hidden;position:relative}
+.pk-fill{height:100%;border-radius:13px;display:flex;align-items:center;justify-content:flex-end;padding:0 10px;font-size:11.5px;font-weight:800;color:#fff;min-width:40px;transition:width 1s cubic-bezier(.22,1,.36,1)}
+.pk-fill.me{background:linear-gradient(90deg,#7F77DD,#B39DDB)}
+.pk-fill.prev{background:linear-gradient(90deg,#c9c2b8,#a8a294)}
+.pk-result{margin-top:6px;text-align:center;font-size:13.5px;font-weight:700}
+.pk-result.win{color:#5bb98c}.pk-result.lose{color:#e0885f}.pk-result.tie{color:var(--tx2)}
+
 </style>
 </head>
 <body data-skin="galaxy">
@@ -802,6 +833,11 @@ body[data-skin="galaxy"] .fx-fauna i:nth-child(5){top:70vh;left:4vw;animation:no
     </div>
 
     <div class="card">
+      <div class="card-h"><div class="card-t">⚔️ 本周的我 vs 上周的我</div><span class="hint">唯一的对手是昨天的自己</span></div>
+      <div class="pk-wrap" id="pkWrap"></div>
+    </div>
+
+    <div class="card">
       <div class="card-h"><div class="card-t">📝 本周自动周报</div><span class="hint">每周一自动换新</span></div>
       <div class="report" id="report"></div>
     </div>
@@ -827,10 +863,14 @@ body[data-skin="galaxy"] .fx-fauna i:nth-child(5){top:70vh;left:4vw;animation:no
     </div>
 
     <div class="card">
-      <div class="card-h"><div class="card-t">🛟 补签卡</div><span class="hint">每月 2 张，用来救回断掉的连续</span></div>
+      <div class="card-h"><div class="card-t">🛟 补签卡 & ✨ 星光守护</div><span class="hint">连续记录的两大保险</span></div>
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
         <div style="font-size:13px" id="mkInfo"></div>
         <button class="btn" id="mkBtn" onclick="useMakeup()">补签昨天</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px dashed rgba(128,120,180,.25)">
+        <div style="font-size:13px">🛡️ 守护卡 <b id="guardCnt">0</b> 张 —— 断签当天自动消耗，帮你保住连续（比补签更省心）</div>
+        <button class="btn" id="guardBtn" onclick="buyGuard()">80 分购买</button>
       </div>
     </div>
 
@@ -912,6 +952,12 @@ body[data-skin="galaxy"] .fx-fauna i:nth-child(5){top:70vh;left:4vw;animation:no
   </div>
 </div>
 
+<div class="combo-pop" id="comboPop"></div>
+<div class="mascot" id="mascot">
+  <div class="m-bubble" id="mBubble"></div>
+  <div class="m-avatar" id="mAvatar"></div>
+  <div class="m-name">小星灵</div>
+</div>
 <div id="toast"></div>
 <div class="confetti" id="cfBox"></div>
 
@@ -998,6 +1044,7 @@ let data=migrate();
 data.fate=data.fate||{date:null,idx:null};
 data.letters=data.letters||[];data.countdowns=data.countdowns||[];
 data.constellationName=data.constellationName||'';data.introDate=data.introDate||'';
+data.combo=0;data.guard=data.guard||0;data.nudgeDate=data.nudgeDate||'';data.evoStage=data.evoStage||0;
 if(!['galaxy','sakura','mint','cream','night'].includes(data.theme))data.theme='galaxy';
 if(data.theme==='sakura'&&!localStorage.getItem(KEY+'_galaxyDone')){data.theme='galaxy';localStorage.setItem(KEY+'_galaxyDone','1');}
 
@@ -1007,12 +1054,20 @@ if(data.theme==='sakura'&&!localStorage.getItem(KEY+'_galaxyDone')){data.theme='
   if(data.lastDate!==t){
     if(data.lastDate){
       const total=data.categories.reduce((s,c)=>s+c.items.length,0);
+      const done=data.categories.reduce((s,c)=>s+c.items.filter(i=>i.done).length,0);
       data.history[data.lastDate]={
-        totalItems:data.categories.reduce((s,c)=>s+c.items.filter(i=>i.done).length,0),
+        totalItems:done,
         totalSlots:total,
         perCat:data.categories.reduce((m,c)=>{m[c.id]={done:c.items.filter(i=>i.done).length,total:c.items.length};return m;},{}),
         mood:data.mood
       };
+      // 星光守护：昨天啥也没做 → 自动消耗守护卡保住连续
+      if(done===0&&data.guard>0&&total>0){
+        data.guard--;
+        const gPerCat={};data.categories.forEach(c=>{gPerCat[c.id]={done:Math.round(c.items.length*0.7),total:c.items.length};});
+        data.history[data.lastDate]={totalItems:Math.round(total*0.7),totalSlots:total,perCat:gPerCat,mood:data.mood,guard:true};
+        setTimeout(()=>{toast('🛡️ 昨天没打卡，守护卡自动生效，连续记录保住了！');confetti(24);},1500);
+      }
     }
     data.categories.forEach(c=>{c.items.forEach(i=>i.done=false);c.open=false;});
     data.schedules.forEach(s=>s.completed=false);
@@ -1166,12 +1221,23 @@ function toggleItem(id,idx){
   const c=catById(id),it=c.items[idx];if(!it)return;
   const wasFull=c.items.length>0&&c.items.every(i=>i.done);
   it.done=!it.done;
-  if(it.done){data.points+=5;data.xp+=5;confetti(14);}
-  else{data.points=Math.max(0,data.points-5);data.xp=Math.max(0,data.xp-5);}
+  if(it.done){
+    data.points+=5;data.xp+=5;confetti(14);
+    // 连击系统
+    data.combo=(data.combo||0)+1;
+    if(data.combo>=2){
+      const pop=document.getElementById('comboPop');
+      pop.textContent='连击 x'+data.combo+'!';
+      pop.classList.remove('go','hot');void pop.offsetWidth;
+      if(data.combo>=8)pop.classList.add('hot');
+      pop.classList.add('go');
+      if(data.combo%5===0){data.points+=10;data.xp+=10;setTimeout(()=>toast('🔥 连击 x'+data.combo+'！额外 +10 星光值'),600);confetti(26);}
+    }
+  }else{data.points=Math.max(0,data.points-5);data.xp=Math.max(0,data.xp-5);data.combo=0;}
   const isFull=c.items.length>0&&c.items.every(i=>i.done);
   if(!wasFull&&isFull){data.points+=25;data.xp+=25;toast('板块清空！+25 星光值 🎉');confetti(36);}
   if(wasFull&&!isFull){data.points=Math.max(0,data.points-25);data.xp=Math.max(0,data.xp-25);}
-  persist();renderAll();
+  persist();renderAll();updateMascot();
   if(it.done) checkBadges();checkCard();
 }
 function addItem(id){
@@ -1384,6 +1450,11 @@ function renderShop(){
     <div class="rw"><div class="e">${r.e||'🎁'}</div><div class="n">${r.n}</div><div class="c">${r.c} 分</div>
       <button ${data.points<r.c?'disabled':''} onclick="redeem(${i})">${data.points<r.c?'还差 '+(r.c-data.points)+' 分':'兑换'}</button>
     </div>`).join('');
+  const gc=document.getElementById('guardCnt');
+  if(gc){gc.textContent=data.guard;
+    const gb=document.getElementById('guardBtn');
+    gb.disabled=data.points<80;gb.textContent=data.points<80?'还差 '+(80-data.points)+' 分':'80 分购买';
+  }
   document.getElementById('log').innerHTML=data.redemptions.length
     ? data.redemptions.slice(-12).reverse().map(l=>`<div>${l.date} · ${l.e||''} ${l.n} <span style="color:#B0A69B">-${l.c}分</span></div>`).join('')
     : '<div class="empty" style="padding:14px">还没有兑换记录，攒够分记得奖励自己</div>';
@@ -1656,10 +1727,119 @@ document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
   t.classList.add('on');
   document.getElementById('p-'+t.dataset.tab).classList.add('on');
   if(t.dataset.tab==='sky'){startSky();}
-  if(t.dataset.tab==='stats'){initCharts();renderRing();renderHeat();weekReport();setTimeout(()=>{if(cWeek)cWeek.resize();if(cRadar)cRadar.resize();if(cMood)cMood.resize();},60);}
+  if(t.dataset.tab==='stats'){initCharts();renderRing();renderHeat();weekReport();renderPK();setTimeout(()=>{if(cWeek)cWeek.resize();if(cRadar)cRadar.resize();if(cMood)cMood.resize();},60);}
   if(t.dataset.tab==='reward'){renderShop();renderBadges();renderStreak();}
   if(t.dataset.tab==='journal'){renderWall();renderLetters();renderCountdowns();document.getElementById('themeEcho').textContent=data.monthTheme?'本月主题：'+data.monthTheme:'';}
 });
+
+/* ---------- 小星灵吉祥物 ---------- */
+const M_LINES={
+  idle:['今天还没点亮星星哦，勾一项试试？','我在这里等你很久啦~','每完成一项，我就亮一分！','深呼吸，从最小的一件事开始。'],
+  happy:['干得漂亮！继续继续~','你认真的样子真好看！','今天的星星亮晶晶 ✨','这个进度我喜欢！'],
+  excited:['哇！！你今天太厉害了！！','火力全开！星星都要被你点亮完了！','主角光环正在生效中！','这就是传说中的自律女王吗！'],
+  grumpy:['呜……今天的星星还空着呢…','我会一直等你的，别忘了我哦…','连续记录在悄悄看着你呢 🥺','现在去勾一项，还来得及！'],
+  sleepy:['早安…我还没睡醒…','早上好呀，新的一天开机了！','先喝杯水，再开始点亮今天~'],
+  guard:['🛡️ 别担心，有我守护你的连续记录！','守护卡在手，断签不慌~']
+};
+function mascotPct(){const s=totalSlots();return s?Math.round(totalDone()/s*100):0;}
+function mascotState(){
+  const h=new Date().getHours();
+  const p=mascotPct();
+  if(h>=21&&p<30)return 'grumpy';
+  if(p>=70)return 'excited';
+  if(p>0)return 'happy';
+  if(h>=5&&h<9)return 'sleepy';
+  return 'idle';
+}
+function mascotEvo(){const s=streak();return s>=30?2:s>=7?1:0;}
+function mascotSVG(st){
+  const e={
+    idle:{eye:'<circle cx="38" cy="46" r="4.5" fill="#5a4632"/><circle cx="62" cy="46" r="4.5" fill="#5a4632"/><circle cx="39.5" cy="44.5" r="1.6" fill="#fff"/><circle cx="63.5" cy="44.5" r="1.6" fill="#fff"/>',
+      mouth:'<path d="M43 56 Q50 61 57 56" stroke="#5a4632" stroke-width="2.6" fill="none" stroke-linecap="round"/>',blush:'',blink:true},
+    happy:{eye:'<path d="M33 47 Q38 41 43 47" stroke="#5a4632" stroke-width="2.8" fill="none" stroke-linecap="round"/><path d="M57 47 Q62 41 67 47" stroke="#5a4632" stroke-width="2.8" fill="none" stroke-linecap="round"/>',
+      mouth:'<path d="M42 55 Q50 64 58 55" stroke="#5a4632" stroke-width="2.8" fill="none" stroke-linecap="round"/>',
+      blush:'<ellipse cx="31" cy="54" rx="4.5" ry="2.6" fill="#ffb3a0" opacity=".75"/><ellipse cx="69" cy="54" rx="4.5" ry="2.6" fill="#ffb3a0" opacity=".75"/>'},
+    excited:{eye:'<path d="M33 48 Q38 40 43 48" stroke="#5a4632" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M57 48 Q62 40 67 48" stroke="#5a4632" stroke-width="3" fill="none" stroke-linecap="round"/>',
+      mouth:'<path d="M41 54 Q50 67 59 54 Z" fill="#5a4632"/><path d="M45 58 Q50 63 55 58 Q50 61 45 58" fill="#ff9a9a"/>',
+      blush:'<ellipse cx="30" cy="53" rx="5" ry="3" fill="#ff9a85" opacity=".85"/><ellipse cx="70" cy="53" rx="5" ry="3" fill="#ff9a85" opacity=".85"/>'},
+    grumpy:{eye:'<path d="M33.5 47 L42.5 49" stroke="#5a4632" stroke-width="2.8" stroke-linecap="round"/><path d="M66.5 47 L57.5 49" stroke="#5a4632" stroke-width="2.8" stroke-linecap="round"/>',
+      mouth:'<path d="M43 60 Q50 54 57 60" stroke="#5a4632" stroke-width="2.6" fill="none" stroke-linecap="round"/>',
+      blush:'',tear:'<ellipse cx="70" cy="52" rx="2.6" ry="3.6" fill="#9ecbff" opacity=".9"/>'},
+    sleepy:{eye:'<path d="M33.5 46 L42.5 46" stroke="#5a4632" stroke-width="2.6" stroke-linecap="round"/><path d="M57.5 46 L66.5 46" stroke="#5a4632" stroke-width="2.6" stroke-linecap="round"/>',
+      mouth:'<path d="M45 58 Q50 61 55 58" stroke="#5a4632" stroke-width="2.4" fill="none" stroke-linecap="round"/>',blush:'',zzz:'<text x="72" y="30" font-size="13" fill="#b9b3d8" font-weight="700" transform="rotate(12 72 30)">z</text>'}
+  }[st]||{};
+  return `<svg viewBox="0 0 100 104" xmlns="http://www.w3.org/2000/svg">
+    <defs><radialGradient id="mBody" cx="40%" cy="30%"><stop offset="0%" stop-color="#FFE99A"/><stop offset="60%" stop-color="#FFD24D"/><stop offset="100%" stop-color="#F5B93B"/></radialGradient></defs>
+    <polygon points="50,2 61.8,38.5 100,38.5 69.1,61 80.9,97.5 50,75 19.1,97.5 30.9,61 0,38.5 38.2,38.5" fill="url(#mBody)" stroke="#e8a52e" stroke-width="2" stroke-linejoin="round"/>
+    ${e.blush||''}${e.eye||''}${e.mouth||''}${e.tear||''}${e.zzz||''}
+  </svg>`;
+}
+function updateMascot(){
+  const st=mascotState();
+  const av=document.getElementById('mAvatar');
+  av.innerHTML=mascotSVG(st);
+  const m=document.getElementById('mascot');
+  const evo=mascotEvo();
+  m.classList.toggle('m-evo1',evo>=1);m.classList.toggle('m-evo2',evo>=2);
+  // 里程碑变身
+  if(evo>data.evoStage){
+    data.evoStage=evo;persist();
+    setTimeout(()=>{
+      confetti(60);toast(evo===1?'👑 小星灵进化了！获得【星光之冠】（连续7天）':'👑✨ 小星灵进入【传奇形态】！（连续30天）');
+      mascotSay(evo===1?'连续 7 天！我戴上星光之冠啦！谢谢你一直点灯 💛':'连续 30 天！！我已经是传说级星灵了！你也是 ✨');
+    },800);
+  }else if(evo<data.evoStage){data.evoStage=evo;persist();}
+}
+function mascotSay(txt){
+  const b=document.getElementById('mBubble');
+  b.textContent=txt;b.classList.add('on');
+  const av=document.getElementById('mAvatar');
+  av.classList.remove('bounce');void av.offsetWidth;av.classList.add('bounce');
+  clearTimeout(b._t);b._t=setTimeout(()=>b.classList.remove('on'),4600);
+}
+document.getElementById('mascot').onclick=()=>{
+  const st=mascotState();
+  const arr=(data.guard>0&&st==='grumpy')?M_LINES.guard.concat(M_LINES[st]):M_LINES[st]||M_LINES.idle;
+  mascotSay(arr[Math.floor(Math.random()*arr.length)]);
+};
+function eveningNudge(){
+  const h=new Date().getHours();
+  if(h<21||data.nudgeDate===todayKey())return;
+  if(mascotPct()>=50)return;
+  if(streak()<2&&!hasProgress(dayKeyAgo(1)))return;
+  data.nudgeDate=todayKey();persist();
+  const left=totalSlots()-totalDone();
+  mascotSay('还有 '+left+' 颗星星没点亮，连续 '+streak()+' 天的记录在等你哦 🥺');
+  setTimeout(()=>toast('🌙 小星灵想你了：今天还没打卡呢'),1200);
+}
+setInterval(()=>{updateMascot();eveningNudge();},60000);
+
+/* ---------- 本周我 vs 上周我 ---------- */
+function renderPK(){
+  const wrap=document.getElementById('pkWrap');if(!wrap)return;
+  const sum=keys=>keys.reduce((s,k)=>{
+    let h;if(k===todayKey()){h={totalItems:totalDone()};}else h=data.history[k];
+    return s+((h&&h.totalItems)||0);
+  },0);
+  const cur=sum([...Array(7)].map((_,i)=>dayKeyAgo(i)));
+  const prev=sum([...Array(7)].map((_,i)=>dayKeyAgo(i+7)));
+  const mx=Math.max(cur,prev,1);
+  const diff=cur-prev;
+  const cls=diff>0?'win':diff<0?'lose':'tie';
+  const txt=diff>0?`🏆 领先上周 <b>${diff}</b> 项，保持住！`:diff<0?`💪 落后上周 <b>${-diff}</b> 项，追回来！`:'🤝 和上周打平，稳住节奏';
+  wrap.innerHTML=`
+    <div class="pk-row"><div class="pk-label">本周（近7天）</div><div class="pk-track"><div class="pk-fill me" style="width:${Math.max(8,cur/mx*100)}%">${cur} 项</div></div></div>
+    <div class="pk-row"><div class="pk-label">上周（前7天）</div><div class="pk-track"><div class="pk-fill prev" style="width:${Math.max(8,prev/mx*100)}%">${prev} 项</div></div></div>
+    <div class="pk-result ${cls}">${cur+prev===0?'先各勾一项，对决才开始':txt}</div>`;
+}
+
+/* ---------- 星光守护购买 ---------- */
+function buyGuard(){
+  if(data.points<80){toast('还差 '+(80-data.points)+' 分才能购买守护卡');return;}
+  if(!confirm('花 80 分购买 1 张守护卡？断签当天会自动消耗。'))return;
+  data.points-=80;data.guard++;persist();renderAll();confetti(20);
+  mascotSay('🛡️ 守护卡已入库！现在有 '+data.guard+' 张，安心去忙吧~');
+}
 
 /* ---------- 补签 ---------- */
 function useMakeup(){
@@ -1677,10 +1857,17 @@ function renderAll(){
   renderHeader();renderMood();renderStreak();renderTop3();renderCats();renderSched();renderEncourage();
   renderRing();renderHeat();weekReport();renderShop();renderBadges();renderWall();updateCharts();
   renderFate();renderLetters();renderCountdowns();renderSkyInfo();
+  renderPK();updateMascot();
 }
 document.getElementById('ov').addEventListener('click',e=>{if(e.target.id==='ov')closeModal();});
 renderAll();
 playIntro();
+// 小星灵开场问候
+setTimeout(()=>{
+  const h=new Date().getHours();
+  const g=h<9?'早安！新的一天，一起点亮星星吧 ✨':h<12?'上午好~ 记得勾掉一件小事哦':h<14?'午后时光，适合来一项轻松的打卡':h<18?'下午好！进度条在等你喂它星星':h<21?'晚上了，今天的星星点了多少啦？':'夜深了，勾一项就睡，别熬太晚 🌙';
+  mascotSay(g);eveningNudge();
+},playIntro?3200:1500);
 </script>
 </body>
 </html>
