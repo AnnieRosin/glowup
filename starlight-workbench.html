@@ -667,9 +667,10 @@ body[data-skin="galaxy"] .fx-fauna i:nth-child(5){top:70vh;left:4vw;animation:no
 .m-bubble{position:absolute;bottom:calc(100% + 10px);right:0;width:210px;background:#fff;color:#4a4463;border-radius:14px 14px 4px 14px;padding:10px 12px;font-size:12.5px;line-height:1.55;box-shadow:0 8px 24px rgba(30,20,80,.28);opacity:0;transform:translateY(6px) scale(.92);transform-origin:bottom right;transition:all .28s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
 .m-bubble.on{opacity:1;transform:translateY(0) scale(1)}
 .m-bubble::after{content:'';position:absolute;bottom:-6px;right:22px;border:7px solid transparent;border-top-color:#fff;border-bottom:none}
-.m-avatar{position:relative;width:62px;height:62px;filter:drop-shadow(0 6px 14px rgba(255,210,90,.45));transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+.m-avatar{position:relative;width:68px;height:68px;filter:drop-shadow(0 6px 14px rgba(255,210,90,.45));transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
 .mascot:hover .m-avatar{transform:scale(1.08) rotate(-4deg)}
-.m-avatar svg{width:100%;height:100%}
+.m-avatar svg{width:100%;height:100%;animation:mFloat 3.4s ease-in-out infinite}
+@keyframes mFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 .m-avatar.bounce{animation:mBounce .55s cubic-bezier(.34,1.56,.64,1)}
 @keyframes mBounce{0%{transform:scale(1)}35%{transform:scale(1.18,.86)}65%{transform:scale(.92,1.12) translateY(-10px)}100%{transform:scale(1)}}
 .m-name{margin-top:3px;font-size:10px;color:var(--tx2);opacity:.85;letter-spacing:1px}
@@ -1753,25 +1754,43 @@ function mascotState(){
 }
 function mascotEvo(){const s=streak();return s>=30?2:s>=7?1:0;}
 function mascotSVG(st){
+  const INK='#4f3b26',LINE='#e39c2f';
+  const blink=(cx)=>`<g transform="translate(${cx},50)"><circle r="6.8" fill="${INK}"/><circle cx="-2.2" cy="-2.4" r="2.5" fill="#fff"/><circle cx="2.2" cy="2" r="1.3" fill="#fff" opacity=".85"/><animateTransform attributeName="transform" type="scale" additive="sum" values="1 1;1 1;1 .1;1 1;1 1" keyTimes="0;.9;.94;.98;1" dur="4.6s" repeatCount="indefinite"/></g>`;
+  const starEye=(cx)=>`<path d="M${cx} 42.5 L${cx+2.3} 47.7 L${cx+7.5} 50 L${cx+2.3} 52.3 L${cx} 57.5 L${cx-2.3} 52.3 L${cx-7.5} 50 L${cx-2.3} 47.7 Z" fill="${INK}"/><circle cx="${cx+1.4}" cy="47.9" r="1.5" fill="#fff"/>`;
   const e={
-    idle:{eye:'<circle cx="38" cy="46" r="4.5" fill="#5a4632"/><circle cx="62" cy="46" r="4.5" fill="#5a4632"/><circle cx="39.5" cy="44.5" r="1.6" fill="#fff"/><circle cx="63.5" cy="44.5" r="1.6" fill="#fff"/>',
-      mouth:'<path d="M43 56 Q50 61 57 56" stroke="#5a4632" stroke-width="2.6" fill="none" stroke-linecap="round"/>',blush:'',blink:true},
-    happy:{eye:'<path d="M33 47 Q38 41 43 47" stroke="#5a4632" stroke-width="2.8" fill="none" stroke-linecap="round"/><path d="M57 47 Q62 41 67 47" stroke="#5a4632" stroke-width="2.8" fill="none" stroke-linecap="round"/>',
-      mouth:'<path d="M42 55 Q50 64 58 55" stroke="#5a4632" stroke-width="2.8" fill="none" stroke-linecap="round"/>',
-      blush:'<ellipse cx="31" cy="54" rx="4.5" ry="2.6" fill="#ffb3a0" opacity=".75"/><ellipse cx="69" cy="54" rx="4.5" ry="2.6" fill="#ffb3a0" opacity=".75"/>'},
-    excited:{eye:'<path d="M33 48 Q38 40 43 48" stroke="#5a4632" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M57 48 Q62 40 67 48" stroke="#5a4632" stroke-width="3" fill="none" stroke-linecap="round"/>',
-      mouth:'<path d="M41 54 Q50 67 59 54 Z" fill="#5a4632"/><path d="M45 58 Q50 63 55 58 Q50 61 45 58" fill="#ff9a9a"/>',
-      blush:'<ellipse cx="30" cy="53" rx="5" ry="3" fill="#ff9a85" opacity=".85"/><ellipse cx="70" cy="53" rx="5" ry="3" fill="#ff9a85" opacity=".85"/>'},
-    grumpy:{eye:'<path d="M33.5 47 L42.5 49" stroke="#5a4632" stroke-width="2.8" stroke-linecap="round"/><path d="M66.5 47 L57.5 49" stroke="#5a4632" stroke-width="2.8" stroke-linecap="round"/>',
-      mouth:'<path d="M43 60 Q50 54 57 60" stroke="#5a4632" stroke-width="2.6" fill="none" stroke-linecap="round"/>',
-      blush:'',tear:'<ellipse cx="70" cy="52" rx="2.6" ry="3.6" fill="#9ecbff" opacity=".9"/>'},
-    sleepy:{eye:'<path d="M33.5 46 L42.5 46" stroke="#5a4632" stroke-width="2.6" stroke-linecap="round"/><path d="M57.5 46 L66.5 46" stroke="#5a4632" stroke-width="2.6" stroke-linecap="round"/>',
-      mouth:'<path d="M45 58 Q50 61 55 58" stroke="#5a4632" stroke-width="2.4" fill="none" stroke-linecap="round"/>',blush:'',zzz:'<text x="72" y="30" font-size="13" fill="#b9b3d8" font-weight="700" transform="rotate(12 72 30)">z</text>'}
+    idle:{eye:blink(40)+blink(60),
+      mouth:`<path d="M45.5 60.5 Q50 64.5 54.5 60.5" stroke="${INK}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`,
+      blush:`<ellipse cx="30" cy="57" rx="4.8" ry="2.9" fill="#ffa9a0" opacity=".55"/><ellipse cx="70" cy="57" rx="4.8" ry="2.9" fill="#ffa9a0" opacity=".55"/>`},
+    happy:{eye:`<path d="M33.5 51 Q40 43.5 46.5 51" stroke="${INK}" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M53.5 51 Q60 43.5 66.5 51" stroke="${INK}" stroke-width="3" fill="none" stroke-linecap="round"/>`,
+      mouth:`<path d="M44 59 Q50 67 56 59 Z" fill="${INK}"/><path d="M47 61.5 Q50 64.8 53 61.5 Z" fill="#ff9d9d"/>`,
+      blush:`<ellipse cx="29.5" cy="57" rx="5.6" ry="3.4" fill="#ffa9a0" opacity=".85"/><ellipse cx="70.5" cy="57" rx="5.6" ry="3.4" fill="#ffa9a0" opacity=".85"/>`},
+    excited:{eye:starEye(40)+starEye(60),
+      mouth:`<path d="M41.5 57.5 Q50 70 58.5 57.5 Z" fill="${INK}"/><ellipse cx="50" cy="62.5" rx="4.2" ry="2.4" fill="#ff8f8f"/>`,
+      blush:`<ellipse cx="29" cy="56.5" rx="6" ry="3.6" fill="#ff968c" opacity=".9"/><ellipse cx="71" cy="56.5" rx="6" ry="3.6" fill="#ff968c" opacity=".9"/>`,
+      extra:`<text x="13" y="28" font-size="13" fill="#ffd76e" font-weight="700">✦</text><text x="84" y="22" font-size="10" fill="#ffd76e" font-weight="700">✦</text>`},
+    grumpy:{eye:`<path d="M33 41.5 L45.5 45.5" stroke="${INK}" stroke-width="3" stroke-linecap="round"/><path d="M67 41.5 L54.5 45.5" stroke="${INK}" stroke-width="3" stroke-linecap="round"/><path d="M34 50 Q40 54 46 50" stroke="${INK}" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M54 50 Q60 54 66 50" stroke="${INK}" stroke-width="3" fill="none" stroke-linecap="round"/>`,
+      mouth:`<path d="M44.5 62.5 Q47 59.8 50 62.3 Q53 64.8 55.5 62" stroke="${INK}" stroke-width="2.3" fill="none" stroke-linecap="round"/>`,
+      tear:`<ellipse cx="65.5" cy="55" rx="2.8" ry="3.8" fill="#9ed4ff" opacity=".95"><animate attributeName="cy" values="55;66" dur="1.7s" repeatCount="indefinite"/><animate attributeName="opacity" values=".95;.95;0" keyTimes="0;.7;1" dur="1.7s" repeatCount="indefinite"/></ellipse>`},
+    sleepy:{eye:`<path d="M34 49.5 Q40 52 46 49.5" stroke="${INK}" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M54 49.5 Q60 52 66 49.5" stroke="${INK}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`,
+      mouth:`<ellipse cx="50" cy="61.5" rx="2.6" ry="3" fill="${INK}"/>`,
+      blush:`<ellipse cx="30" cy="57.5" rx="4.5" ry="2.7" fill="#ffa9a0" opacity=".4"/><ellipse cx="70" cy="57.5" rx="4.5" ry="2.7" fill="#ffa9a0" opacity=".4"/>`,
+      zzz:`<text x="72" y="30" font-size="14" fill="#b9b3d8" font-weight="800" transform="rotate(12 72 30)">z<animate attributeName="opacity" values="1;.2;1" dur="2s" repeatCount="indefinite"/></text><text x="84" y="18" font-size="10" fill="#b9b3d8" font-weight="800" transform="rotate(12 84 18)">z<animate attributeName="opacity" values=".2;1;.2" dur="2s" repeatCount="indefinite"/></text>`}
   }[st]||{};
+  const pts='50,13 63.5,36.4 89.9,42 71.9,62.1 74.7,89 50,78 25.3,89 28.1,62.1 10.1,42 36.5,36.4';
   return `<svg viewBox="0 0 100 104" xmlns="http://www.w3.org/2000/svg">
-    <defs><radialGradient id="mBody" cx="40%" cy="30%"><stop offset="0%" stop-color="#FFE99A"/><stop offset="60%" stop-color="#FFD24D"/><stop offset="100%" stop-color="#F5B93B"/></radialGradient></defs>
-    <polygon points="50,2 61.8,38.5 100,38.5 69.1,61 80.9,97.5 50,75 19.1,97.5 30.9,61 0,38.5 38.2,38.5" fill="url(#mBody)" stroke="#e8a52e" stroke-width="2" stroke-linejoin="round"/>
-    ${e.blush||''}${e.eye||''}${e.mouth||''}${e.tear||''}${e.zzz||''}
+    <defs><radialGradient id="mBody" cx="38%" cy="26%" r="80%"><stop offset="0%" stop-color="#FFF6C2"/><stop offset="45%" stop-color="#FFE27A"/><stop offset="100%" stop-color="#FFC94D"/></radialGradient></defs>
+    <polygon points="${pts}" fill="none" stroke="${LINE}" stroke-width="15" stroke-linejoin="round"/>
+    <polygon points="${pts}" fill="url(#mBody)" stroke="url(#mBody)" stroke-width="10" stroke-linejoin="round"/>
+    <ellipse cx="37" cy="26" rx="9" ry="5" fill="#fff" opacity=".38" transform="rotate(-18 37 26)"/>
+    <path d="M50 8 Q44.5 2.5 49.5 .8" stroke="${LINE}" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+    <path d="M55 1.5 L55.9 3.6 L58 4.5 L55.9 5.4 L55 7.5 L54.1 5.4 L52 4.5 L54.1 3.6 Z" fill="#ffd76e"><animate attributeName="opacity" values="1;.35;1" dur="2.2s" repeatCount="indefinite"/></path>
+    <circle cx="5.5" cy="39" r="4.2" fill="#ffe08a" stroke="${LINE}" stroke-width="1.6"/>
+    <circle cx="94.5" cy="39" r="4.2" fill="#ffe08a" stroke="${LINE}" stroke-width="1.6"/>
+    <ellipse cx="33" cy="96" rx="5.2" ry="3.4" fill="#ffe08a" stroke="${LINE}" stroke-width="1.6"/>
+    <ellipse cx="67" cy="96" rx="5.2" ry="3.4" fill="#ffe08a" stroke="${LINE}" stroke-width="1.6"/>
+    <path d="M11 25 L12.2 28.8 L16 30 L12.2 31.2 L11 35 L9.8 31.2 L6 30 L9.8 28.8 Z" fill="#fff" opacity=".85"><animate attributeName="opacity" values=".1;.9;.1" dur="2.6s" repeatCount="indefinite"/></path>
+    <path d="M90 16 L91 19 L94 20 L91 21 L90 24 L89 21 L86 20 L89 19 Z" fill="#fff" opacity=".75"><animate attributeName="opacity" values=".85;.1;.85" dur="3.2s" repeatCount="indefinite"/></path>
+    ${e.blush||''}${e.eye||''}${e.mouth||''}${e.tear||''}${e.zzz||''}${e.extra||''}
   </svg>`;
 }
 function updateMascot(){
