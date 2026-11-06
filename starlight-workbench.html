@@ -254,6 +254,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-
 .fg label{display:block;font-size:11.5px;color:var(--tx2);margin-bottom:4px;font-weight:500}
 .fg input,.fg select{width:100%;padding:10px 12px;border:1.5px solid var(--bd);border-radius:9px;font-size:13px;font-family:inherit;background:var(--bg)}
 .fg input:focus,.fg select:focus{outline:none;border-color:var(--a3)}
+
+/* 帮助中心 */
+.help-btn{border:1px solid var(--bd);background:rgba(255,255,255,.7);color:var(--a4);font-family:inherit;font-size:11.5px;font-weight:600;padding:6px 12px;border-radius:999px;cursor:pointer;transition:.2s;white-space:nowrap}
+.help-btn:hover{transform:translateY(-1px);box-shadow:var(--sh)}
+.help-modal{max-width:470px;max-height:78vh;overflow-y:auto}
+.help-modal h4{font-size:13.5px;margin:15px 0 6px;color:var(--a4)}
+.help-modal h4:first-of-type{margin-top:8px}
+.help-modal .hr{font-size:12.5px;color:var(--tx);line-height:1.75}
+.help-modal .hr b{color:var(--a4)}
+.help-modal .tip{margin-top:14px;padding:10px 12px;border-radius:10px;background:linear-gradient(135deg,var(--a1),var(--b1));font-size:11.5px;color:var(--a5);line-height:1.65}
+.help-close{margin-top:14px;width:100%}
 .mact{display:flex;gap:8px;margin-top:16px}
 .mact button{flex:1;padding:10px;border-radius:9px;border:none;font-size:13px;font-weight:500;cursor:pointer}
 .mact .p{background:linear-gradient(135deg,var(--a3),var(--b3));color:#fff}
@@ -434,6 +445,7 @@ body[data-skin="galaxy"] .rw button:disabled{background:rgba(255,255,255,.08);co
 body[data-skin="galaxy"] .badge{background:linear-gradient(135deg,#4A3A1E,#6B4E22);color:#F5CE8B}
 body[data-skin="galaxy"] .badge.lock{background:rgba(255,255,255,.06);color:#6F679C}
 body[data-skin="galaxy"] .modal{background:#241E56}
+body[data-skin="galaxy"] .help-btn{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.14)}
 body[data-skin="galaxy"] .fg input,body[data-skin="galaxy"] .fg select{background:rgba(255,255,255,.07);color:var(--tx)}
 body[data-skin="galaxy"] .mact .s{background:rgba(255,255,255,.08);color:var(--tx2)}
 body[data-skin="galaxy"] .jcard{border-color:rgba(143,135,232,.2)}
@@ -755,6 +767,7 @@ body[data-skin="galaxy"] .fx-fauna i:nth-child(5){top:70vh;left:4vw;animation:no
     <div class="theme-row">
       <span style="font-size:11px;color:var(--tx2)">本月主题</span>
       <input id="monthTheme" placeholder="如：睡眠月 / 体态月" maxlength="12">
+      <button class="help-btn" onclick="openHelp()" title="玩法与规则">❓ 玩法</button>
       <div class="skin-dots">
         <span class="skin-dot on" data-skin="galaxy" style="background:linear-gradient(135deg,#3A3178,#8F87E8,#E0709E)" title="银河夜景"></span>
         <span class="skin-dot" data-skin="sakura" style="background:linear-gradient(135deg,#CECBF6,#F4C0D1)" title="樱花雨 🌸"></span>
@@ -814,7 +827,7 @@ body[data-skin="galaxy"] .fx-fauna i:nth-child(5){top:70vh;left:4vw;animation:no
     </div>
 
     <div class="card" id="sec-cats">
-      <div class="card-h"><div class="card-t">🌸 成长板块</div><span class="hint">点开板块勾选 · 每周目标按「达标天数」算</span></div>
+      <div class="card-h"><div class="card-t">🌸 成长板块</div><span class="hint">勾一项 +5 星光值 · 每周目标按「达标天数」算 · 点板块名展开勾选</span></div>
       <div class="grid2" id="cats"></div>
     </div>
 
@@ -980,6 +993,37 @@ body[data-skin="galaxy"] .fx-fauna i:nth-child(5){top:70vh;left:4vw;animation:no
       <button class="s" onclick="closeModal()">取消</button>
       <button class="p" onclick="saveSched()">保存</button>
     </div>
+  </div>
+</div>
+
+<!-- 玩法与规则帮助中心 -->
+<div class="overlay" id="hv" onclick="if(event.target===this)closeHelp()">
+  <div class="modal help-modal">
+    <h3>📖 玩法与规则 · 30 秒上手</h3>
+
+    <h4>🚀 三步开始</h4>
+    <div class="hr">① 去 <b>今日 → 成长板块</b>，点开任意板块，勾掉一件事<br>② 右上角 <b>星光值</b> 立刻 +5，XP 条开始涨<br>③ 攒够分去 <b>奖励 → 星光商店</b>，兑换你给自己定的奖励</div>
+
+    <h4>💰 星光值怎么攒</h4>
+    <div class="hr">· 完成一个子任务 <b>+5</b><br>· 清空一个板块（全部勾完）<b>+25</b><br>· 完成一条日程 <b>+5</b><br>· 连击每满 5 次额外 <b>+10</b></div>
+
+    <h4>📈 等级</h4>
+    <div class="hr">完成任务涨 XP，攒满自动升级：<b>新手星 → 微光 → 小星星 → … → 传奇女主</b>。等级只和 XP 有关，花星光值不会降级。</div>
+
+    <h4>🔥 连续打卡 & PK</h4>
+    <div class="hr">每天都有任意记录（勾选或日程完成）就算<b>连续 +1 天</b>。<b>数据页</b>里有「本周的我 vs 上周的我」，唯一的对手是上周的自己。</div>
+
+    <h4>🎯 每周目标怎么算</h4>
+    <div class="hr">每个板块有自己的每周目标，按<b>「达标天数」</b>计——不是每天全清，做完当天目标的 70% 左右就算达标一天，别把自己逼太紧。</div>
+
+    <h4>🛟 断签了怎么办</h4>
+    <div class="hr">· <b>补签卡</b>：每月送 2 张，月底重置，可以补昨天<br>· <b>星光守护卡</b>：80 星光值在「奖励」页购买，断签当天自动消耗，连续记录不断<br>两者都在「奖励」页使用。</div>
+
+    <h4>🔮 每天的小惊喜</h4>
+    <div class="hr">每天一张<b>命运卡</b>、右下角的<b>小星灵</b>会陪你打卡（点它有话对你说）、全清一天解锁<b>成就卡片墙</b>一张、完成的任务会在<b>星图</b>上连成你的星座。</div>
+
+    <div class="tip">💡 数据小贴士：所有记录都保存在你这台电脑的浏览器里，记得不要清理浏览器缓存，也尽量固定用同一个浏览器打开哦。</div>
+    <button class="btn p help-close" onclick="closeHelp()">我知道啦，开始点亮星星 ✨</button>
   </div>
 </div>
 
@@ -1594,7 +1638,17 @@ const SCRIPTS=[
   '别的剧本在赶工，你的剧本在生长。',
   '下一集预告里，有你想要的样子。'
 ];
-function closeIntro(){document.getElementById('intro').classList.remove('on');}
+function closeIntro(){
+  document.getElementById('intro').classList.remove('on');
+  // 第一次来的用户：开场结束后自动展开玩法指南（只弹一次）
+  if(!data.helpSeen){setTimeout(openHelp,900);}
+}
+function openHelp(){document.getElementById('hv').classList.add('on');}
+function closeHelp(){
+  document.getElementById('hv').classList.remove('on');
+  if(!data.helpSeen){data.helpSeen=true;persist();toast('随时点右上角「❓ 玩法」可以回看规则哦');}
+}
+addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('hv').classList.contains('on'))closeHelp();});
 function playIntro(){
   if(data.introDate===todayKey())return;
   data.introDate=todayKey();persist();
