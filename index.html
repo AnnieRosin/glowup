@@ -1047,7 +1047,7 @@ body[data-skin="galaxy"] .fx-fauna i:nth-child(5){top:70vh;left:4vw;animation:no
     <div class="hr">每天一张<b>命运卡</b>、右下角的<b>小星灵</b>会陪你打卡（点它有话对你说）、全清一天解锁<b>成就卡片墙</b>一张、完成的任务会在<b>星图</b>上连成你的星座。</div>
 
     <h4>🎵 背景音乐</h4>
-    <div class="hr">左下角 <b>🎵</b> 打开音乐面板：三首原创氛围曲随心情换，也可以上传自己的歌；音量随意调，播放时唱片会转圈。</div>
+    <div class="hr">左下角 <b>🎵</b> 打开音乐面板：三首原创氛围曲 + 三首古典名曲（《致爱丽丝》《D大调卡农》《G大调小步舞曲》）随心情换，也可以上传自己的歌；音量随意调，播放时唱片会转圈。</div>
 
     <div class="tip">💡 数据小贴士：所有记录都保存在你这台电脑的浏览器里，记得不要清理浏览器缓存，也尽量固定用同一个浏览器打开哦。</div>
     <button class="btn p help-close" onclick="closeHelp()">我知道啦，开始点亮星星 ✨</button>
@@ -1081,7 +1081,7 @@ body[data-skin="galaxy"] .fx-fauna i:nth-child(5){top:70vh;left:4vw;animation:no
       <button class="mu-pp" id="muPP" onclick="muToggle()" title="播放/暂停">▶</button>
       <input type="range" class="mu-vol" id="muVol" min="0" max="100" value="50" oninput="muSetVol(this.value)" title="音量">
     </div>
-    <div class="mu-tip" id="muTip">💡 原创氛围曲由浏览器实时生成，不会卡顿；「我的音乐」仅本次会话有效（刷新后需重新上传）。</div>
+    <div class="mu-tip" id="muTip">💡 古典名曲为程序化改编、由浏览器实时演奏，不依赖外部音频文件；「我的音乐」仅本次会话有效（刷新后需重新上传）。</div>
   </div>
   <button class="mu-btn" id="muBtn" onclick="muTogglePanel()" title="背景音乐">🎵</button>
   <input type="file" id="muFile" accept="audio/*" style="display:none" onchange="muUpload(this)">
@@ -2101,6 +2101,9 @@ const MU_LIST=[
   {id:'lullaby',nm:'🌌 星海摇篮曲',ds:'舒缓氛围铺底'},
   {id:'piano',nm:'🌧️ 雨夜琴房',ds:'钢琴琶音+细雨'},
   {id:'forest',nm:'🍃 森林晨风',ds:'马林巴+微风'},
+  {id:'flelise',nm:'🎹 致爱丽丝',ds:'贝多芬 · 钢琴'},
+  {id:'canon',nm:'🎻 D大调卡农',ds:'帕赫贝尔 · 弦乐'},
+  {id:'minuet',nm:'🎼 G大调小步舞曲',ds:'巴赫 · 钢琴'},
   {id:'custom',nm:'📁 我的音乐',ds:'上传喜欢的歌'}
 ];
 let AC=null,muGain=null,muTimer=null,muNoiseSrc=null,muCustom=null,muCustomURL='';
@@ -2125,7 +2128,54 @@ const MU_SCHED={
   piano(t){const c=MU_CHORDS[muStep%4];if(Math.random()<.88){const pool=c.map(f=>f*2).concat([c[0]]);const f=pool[Math.floor(Math.random()*pool.length)];muOsc(t,f,2.4,.11,'triangle',.012);if(Math.random()<.3)muOsc(t+.31,pool[Math.floor(Math.random()*pool.length)],2,.07,'triangle',.012);}muStep++;},
   forest(t){if(Math.random()<.6){const f=MU_FOREST[Math.floor(Math.random()*MU_FOREST.length)];muOsc(t,f,1.2,.13,'sine',.006);if(Math.random()<.25)muOsc(t+.27,MU_FOREST[Math.floor(Math.random()*MU_FOREST.length)],1,.09,'sine',.006);}muStep++;}
 };
-function muTick(){if(AC.state!=='running'){AC.resume();return;}const t=AC.currentTime;while(muNextT<t+0.6){MU_SCHED[muTrack](muNextT);muNextT+=MU_STEPT[muTrack];}}
+function muTick(){if(AC.state!=='running'){AC.resume();return;}const t=AC.currentTime;
+  if(MU_SONGS[muTrack]){ /* 古典曲目：按乐谱序列调度，循环播放 */
+    const s=MU_SONGS[muTrack],rt=MU_RT[muTrack],ev=s.ev;
+    while(rt.i<ev.length&&rt.t0+ev[rt.i][0]*s.spb<t+0.8){
+      const e=ev[rt.i];muOsc(rt.t0+e[0]*s.spb,e[1],e[2]*s.spb,e[3]||.12,e[4]||'triangle',.008);rt.i++;}
+    if(rt.i>=ev.length){rt.t0+=s.loop*s.spb;rt.i=0;}
+  } else {
+    while(muNextT<t+0.6){MU_SCHED[muTrack](muNextT);muNextT+=MU_STEPT[muTrack];}
+  }
+}
+/* ---------- 古典名曲乐谱（程序化改编，单位=拍） ---------- */
+function nf(n){const m={C:0,'C#':1,D:2,'D#':3,E:4,F:5,'F#':6,G:7,'G#':8,A:9,'A#':10,B:11};return 440*Math.pow(2,(m[n.slice(0,-1)]+(+n.slice(-1)-4)*12-9)/12);}
+const MU_SONGS={
+  /* 贝多芬《致爱丽丝》主题段：a小调，拍=八分音符 */
+  flelise:{spb:.2,loop:42,ev:[
+    [0,'E5',1],[1,'D#5',1],[2,'E5',1],[3,'D#5',1],[4,'E5',1],[5,'B4',1],[6,'D5',1],[7,'C5',1],[8,'A4',2],
+    [10,'C4',1],[11,'E4',1],[12,'A4',1],[13,'B4',2],
+    [15,'E4',1],[16,'G#4',1],[17,'B4',1],[18,'C5',2],
+    [20,'E4',1],[21,'E5',1],[22,'D#5',1],[23,'E5',1],[24,'D#5',1],[25,'E5',1],[26,'B4',1],[27,'D5',1],[28,'C5',1],[29,'A4',2],
+    [31,'C4',1],[32,'E4',1],[33,'A4',1],[34,'B4',2],
+    [36,'E4',1],[37,'C5',1],[38,'B4',1],[39,'A4',2],
+    [8,'A2',4,.05,'sine'],[15,'E2',4,.05,'sine'],[29,'A2',4,.05,'sine'],[36,'A2',4,.05,'sine']
+  ]},
+  /* 帕赫贝尔《D大调卡农》：两条旋律句+低音循环，拍=四分音符 */
+  canon:{spb:.52,loop:32,ev:[
+    [0,'F#5',2],[2,'E5',2],[4,'D5',2],[6,'C#5',2],[8,'B4',2],[10,'A4',2],[12,'B4',2],[14,'C#5',2],
+    [16,'D5',2],[18,'C#5',2],[20,'B4',2],[22,'A4',2],[24,'G4',2],[26,'F#4',2],[28,'G4',2],[30,'E4',2],
+    [0,'D3',2,.055,'sine'],[2,'A2',2,.055,'sine'],[4,'B2',2,.055,'sine'],[6,'F#2',2,.055,'sine'],[8,'G2',2,.055,'sine'],[10,'D3',2,.055,'sine'],[12,'G2',2,.055,'sine'],[14,'A2',2,.055,'sine'],
+    [16,'D3',2,.055,'sine'],[18,'A2',2,.055,'sine'],[20,'B2',2,.055,'sine'],[22,'F#2',2,.055,'sine'],[24,'G2',2,.055,'sine'],[26,'D3',2,.055,'sine'],[28,'G2',2,.055,'sine'],[30,'A2',2,.055,'sine'],
+    [1,'A4',1.6,.05,'sine'],[5,'F#4',1.6,.05,'sine'],[9,'D4',1.6,.05,'sine'],[13,'B3',1.6,.05,'sine'],
+    [17,'F#4',1.6,.05,'sine'],[21,'D4',1.6,.05,'sine'],[25,'B3',1.6,.05,'sine'],[29,'G3',1.6,.05,'sine']
+  ]},
+  /* 巴赫《G大调小步舞曲》(Petzold)：3/4拍，拍=八分音符 */
+  minuet:{spb:.21,loop:48,ev:[
+    [0,'D5',2],[2,'G4',1],[3,'A4',1],[4,'B4',1],[5,'C5',1],
+    [6,'D5',2],[8,'G4',2],[10,'G4',2],
+    [12,'E5',2],[14,'C5',1],[15,'D5',1],[16,'E5',1],[17,'F#5',1],
+    [18,'G5',2],[20,'G4',2],[22,'G4',2],
+    [24,'C5',2],[26,'D5',1],[27,'C5',1],[28,'B4',1],[29,'A4',1],
+    [30,'B4',2],[32,'C5',1],[33,'B4',1],[34,'A4',1],[35,'G4',1],
+    [36,'F#4',2],[38,'G4',1],[39,'A4',1],[40,'B4',1],[41,'G4',1],
+    [42,'A4',3],
+    [0,'G2',4,.05,'sine'],[6,'B2',4,.05,'sine'],[12,'C3',4,.05,'sine'],[18,'D3',4,.05,'sine'],
+    [24,'A2',4,.05,'sine'],[30,'C3',4,.05,'sine'],[36,'D3',4,.05,'sine'],[42,'G2',4,.05,'sine']
+  ]}
+};
+const MU_RT={};
+Object.keys(MU_SONGS).forEach(k=>{const s=MU_SONGS[k];s.ev.forEach(e=>e[1]=nf(e[1]));s.ev.sort((a,b)=>a[0]-b[0]);});
 function muStartNoise(vol,freq){
   muStopNoise();
   const len=2*AC.sampleRate,buf=AC.createBuffer(1,len,AC.sampleRate),d=buf.getChannelData(0);
@@ -2144,7 +2194,7 @@ function muStart(){
   if(!muGain){muGain=AC.createGain();muGain.connect(AC.destination);}
   muGain.gain.setTargetAtTime(muVol/100,AC.currentTime,0.05);
   if(muTrack==='custom'){muCustom.volume=muVol/100;var pp=muCustom.play();if(pp&&pp.catch)pp.catch(()=>{});}
-  else{const n=MU_NOISE[muTrack];if(n[0])muStartNoise(n[0],n[1]);muNextT=AC.currentTime+0.1;if(!muTimer)muTimer=setInterval(muTick,110);}
+  else{const n=MU_NOISE[muTrack];if(n&&n[0])muStartNoise(n[0],n[1]);muNextT=AC.currentTime+0.1;if(MU_SONGS[muTrack])MU_RT[muTrack]={i:0,t0:AC.currentTime+0.15};if(!muTimer)muTimer=setInterval(muTick,110);}
   muPlaying=true;data.muWant=true;persist();
   document.getElementById('muBtn').classList.remove('hint');
   muUI();
