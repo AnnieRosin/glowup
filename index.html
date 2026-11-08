@@ -753,6 +753,28 @@ body[data-skin="galaxy"] .fx-fauna i:nth-child(5){top:70vh;left:4vw;animation:no
 .mu-tip{margin-top:9px;font-size:10px;line-height:1.5;color:var(--tx2)}
 .mu-hint{animation:muHint 1.2s ease-in-out infinite}
 @keyframes muHint{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+/* ---------- 此时此刻（时钟+天气） ---------- */
+.now-wrap{display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+.now-left{min-width:180px}
+.now-clock{font-size:36px;font-weight:800;font-family:Consolas,monospace;letter-spacing:2px;color:var(--a4);line-height:1.1}
+.now-date{font-size:12.5px;color:var(--tx);margin-top:5px;font-weight:700}
+.now-period{font-size:11px;color:var(--tx2);margin-top:3px}
+.now-right{flex:1;min-width:230px}
+.wx-main{display:flex;align-items:center;gap:12px}
+.wx-emoji{font-size:38px;line-height:1}
+.wx-temp{font-size:26px;font-weight:800;color:var(--tx);line-height:1.15}
+.wx-desc{font-size:11.5px;color:var(--tx2);margin-top:2px}
+.wx-days{display:flex;gap:10px;margin-top:12px}
+.wx-day{flex:1;text-align:center;background:var(--a1);border-radius:10px;padding:8px 4px;font-size:11px;color:var(--tx2)}
+.wx-day b{display:block;font-size:17px;margin:2px 0}
+.wx-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:13px}
+.wx-chip{border:1px solid var(--bd);background:var(--a1);border-radius:14px;padding:4px 11px;font-size:11px;cursor:pointer;color:var(--tx);font-family:inherit;transition:.15s}
+.wx-chip:hover{border-color:var(--a3)}
+.wx-chip.on{background:var(--a3);color:#fff;border-color:var(--a3)}
+.wx-citybar{display:flex;gap:6px;margin-top:8px}
+.wx-citybar input{flex:1;border:1px solid var(--bd);border-radius:14px;padding:5px 12px;font-size:11.5px;font-family:inherit;background:var(--card);color:var(--tx)}
+.wx-citybar input:focus{outline:none;border-color:var(--a3)}
+.wx-loading{font-size:12px;color:var(--tx2)}
 /* 本周PK */
 .pk-wrap{display:flex;flex-direction:column;gap:10px;padding:4px 0}
 .pk-row{display:flex;align-items:center;gap:10px}
@@ -837,6 +859,23 @@ body[data-skin="galaxy"] .fx-fauna i:nth-child(5){top:70vh;left:4vw;animation:no
         <div><span class="big" id="stBig">0</span><span style="font-size:14px"> 天</span></div>
         <div class="small" id="stMsg">今天动一下，就开始了</div>
         <div class="small" id="mkMsg" style="margin-top:6px">补签卡 2 张</div>
+      </div>
+    </div>
+
+    <div class="card" id="sec-now">
+      <div class="card-h"><div class="card-t">⏰ 此时此刻</div><span class="hint" id="nowCityHint">当地时间 · 实时天气</span></div>
+      <div class="now-wrap">
+        <div class="now-left">
+          <div class="now-clock" id="nowClock">--:--:--</div>
+          <div class="now-date" id="nowDate"></div>
+          <div class="now-period" id="nowPeriod"></div>
+        </div>
+        <div class="now-right" id="nowWx"><div class="wx-loading">正在获取天气…</div></div>
+      </div>
+      <div class="wx-chips" id="nowCities"></div>
+      <div class="wx-citybar">
+        <input id="wxCityInp" placeholder="其他城市：输入名字，如 巴黎 / Singapore" maxlength="30">
+        <button class="wx-chip" onclick="nowSearchCity()">搜索</button>
       </div>
     </div>
 
@@ -1861,7 +1900,7 @@ function delCountdown(i){data.countdowns.splice(i,1);persist();renderCountdowns(
 /* ---------- 区块导航（把每个标签页拆块，减少下滑） ---------- */
 const SECS={
   today:[
-    {g:'状态',items:[['sec-mood','🌤','心情 & 连续'],['sec-fate','🔮','命运指引']]},
+    {g:'状态',items:[['sec-mood','🌤','心情 & 连续'],['sec-now','⏰','此时此刻'],['sec-fate','🔮','命运指引']]},
     {g:'行动',items:[['sec-top3','🎯','三件最重要的事'],['sec-cats','🌸','成长板块'],['sec-sched','📅','今日日程']]},
     {g:'收尾',items:[['sec-quote','💫','今日鼓励语']]}
   ],
@@ -2257,6 +2296,78 @@ document.getElementById('muVol').value=muVol;
 if(data.muWant){document.getElementById('muBtn').classList.add('hint');
   setTimeout(()=>{if(!muWantToastShown&&!muPlaying){muWantToastShown=true;toast('上次背景音乐还开着，点左下角 🎵 继续播放');}},4200);
 }
+
+/* ---------- 此时此刻：时钟与天气 ---------- */
+const WX_CODE={0:['☀️','晴'],1:['🌤','基本晴'],2:['⛅','多云'],3:['☁️','阴'],45:['🌫️','雾'],48:['🌫️','冻雾'],51:['🌦️','毛毛雨'],53:['🌦️','毛毛雨'],55:['🌦️','浓毛雨'],56:['🌧️','冻毛雨'],57:['🌧️','冻毛雨'],61:['🌧️','小雨'],63:['🌧️','中雨'],65:['🌧️','大雨'],66:['🌧️','冻雨'],67:['🌧️','冻雨'],71:['🌨️','小雪'],73:['🌨️','中雪'],75:['🌨️','大雪'],77:['🌨️','雪粒'],80:['🌦️','阵雨'],81:['🌧️','阵雨'],82:['🌧️','强阵雨'],85:['🌨️','阵雪'],86:['🌨️','阵雪'],95:['⛈️','雷暴'],96:['⛈️','雷暴伴冰雹'],99:['⛈️','雷暴伴冰雹']};
+const NOW_PRESET=[['上海',31.23,121.47],['北京',39.91,116.4],['广州',23.13,113.26],['成都',30.66,104.07],['东京',35.68,139.69],['伦敦',51.51,-0.13],['纽约',40.71,-74.01],['悉尼',-33.87,151.21]];
+function nowOffsetSec(){return data.nowCity&&data.nowCity.offset!=null?data.nowCity.offset:-new Date().getTimezoneOffset()*60;}
+function zoneLabel(){const o=nowOffsetSec()/3600;return 'GMT'+(o>=0?'+':'')+(o%1?o.toFixed(1):o);}
+function nowTick(){
+  const ck=document.getElementById('nowClock');if(!ck)return;
+  const d=new Date(Date.now()+nowOffsetSec()*1000+new Date().getTimezoneOffset()*60000);
+  const p=n=>String(n).padStart(2,'0');
+  ck.textContent=p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds());
+  document.getElementById('nowDate').textContent=(d.getMonth()+1)+'月'+d.getDate()+'日 · 星期'+'日一二三四五六'[d.getDay()]+' · '+zoneLabel();
+  const h=d.getHours();
+  document.getElementById('nowPeriod').textContent=h<5?'🌙 夜深了，早点休息':h<8?'🌅 清晨，一天最早的时光':h<11?'☀️ 上午好，效率正高':h<13?'🍜 中午，记得好好吃饭':h<17?'🌤 下午好，来杯水休息下':h<19?'🌆 傍晚，暮色温柔':h<23?'🌃 晚上好，今天收获如何':'🌙 夜深了，早点休息';
+  document.getElementById('nowZone')&&(document.getElementById('nowZone').textContent=zoneLabel());
+}
+function nowCityObj(){return data.nowCity||{name:'上海',lat:31.23,lon:121.47};}
+function wxLoad(force){
+  const c=nowCityObj(),cache=data.wxCache;
+  if(!force&&cache&&cache.k===c.name+c.lat&&Date.now()-cache.t<30*60*1000&&cache.d&&cache.d.current){nowRenderWx(cache.d);return;}
+  document.getElementById('nowWx').innerHTML='<div class="wx-loading">正在获取天气…</div>';
+  fetch('https://api.open-meteo.com/v1/forecast?latitude='+c.lat+'&longitude='+c.lon+'&current=temperature_2m,weather_code,relative_humidity_2m,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=3')
+    .then(r=>r.json()).then(d=>{
+      if(!d||!d.current)throw 0;
+      data.wxCache={k:c.name+c.lat,t:Date.now(),d:d};persist();
+      if(data.nowCity&&d.utc_offset_seconds!=null){data.nowCity.offset=d.utc_offset_seconds;persist();}
+      nowTick();nowRenderWx(d);
+    }).catch(()=>{document.getElementById('nowWx').innerHTML='<div class="wx-loading">天气获取失败，检查网络后 <button class="wx-chip" onclick="wxLoad(true)">重试</button></div>';});
+}
+function nowRenderWx(d){
+  const cur=d.current,wc=WX_CODE[cur.weather_code]||['🌡️','—'];
+  let days='';
+  (d.daily.time||[]).forEach((t,i)=>{
+    const w=WX_CODE[d.daily.weather_code[i]]||['🌡️',''];
+    const lab=i===0?'今天':i===1?'明天':i===2?'后天':t.slice(5);
+    days+='<div class="wx-day">'+lab+'<b>'+w[0]+'</b>'+Math.round(d.daily.temperature_2m_max[i])+'° / '+Math.round(d.daily.temperature_2m_min[i])+'°</div>';
+  });
+  document.getElementById('nowWx').innerHTML='<div class="wx-main"><div class="wx-emoji">'+wc[0]+'</div><div><div class="wx-temp">'+Math.round(cur.temperature_2m)+'°C</div><div class="wx-desc">'+wc[1]+' · 湿度 '+cur.relative_humidity_2m+'% · 风 '+Math.round(cur.wind_speed_10m)+' km/h</div></div></div><div class="wx-days">'+days+'</div>';
+  document.getElementById('nowCityHint').textContent=nowCityObj().name+' · 实时天气';
+}
+function nowSetCity(name,lat,lon){
+  data.nowCity={name:name,lat:lat,lon:lon,offset:null};persist();
+  renderNowChips();nowTick();wxLoad(true);
+}
+function nowLocate(){
+  if(!navigator.geolocation){toast('这个浏览器不支持定位');return;}
+  toast('正在定位…');
+  navigator.geolocation.getCurrentPosition(p=>{
+    data.nowCity={name:'我的位置',lat:+p.coords.latitude.toFixed(2),lon:+p.coords.longitude.toFixed(2),offset:null};persist();
+    renderNowChips();nowTick();wxLoad(true);
+  },()=>toast('定位没成功，选个城市吧 📍'),{timeout:8000});
+}
+function nowSearchCity(){
+  const q=document.getElementById('wxCityInp').value.trim();if(!q)return;
+  fetch('https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(q)+'&count=1&language=zh')
+    .then(r=>r.json()).then(d=>{
+      const r0=d.results&&d.results[0];
+      if(!r0){toast('没找到「'+q+'」，换个名字试试');return;}
+      nowSetCity(r0.name,+r0.latitude.toFixed(2),+r0.longitude.toFixed(2));
+      document.getElementById('wxCityInp').value='';
+      toast('已切换到 '+r0.name+(r0.country?' · '+r0.country:''));
+    }).catch(()=>toast('城市搜索失败，稍后再试'));
+}
+function renderNowChips(){
+  const c=data.nowCity||{},inPreset=NOW_PRESET.some(p=>p[0]===c.name);
+  let html='<button class="wx-chip" onclick="nowLocate()">📍我的位置</button>';
+  if(c.name&&!inPreset)html+='<span class="wx-chip on" style="cursor:default">'+c.name+'</span>';
+  html+=NOW_PRESET.map(p=>'<button class="wx-chip'+(c.name===p[0]?' on':'')+'" onclick="nowSetCity(\''+p[0]+'\','+p[1]+','+p[2]+')">'+p[0]+'</button>').join('');
+  document.getElementById('nowCities').innerHTML=html;
+}
+document.getElementById('wxCityInp').addEventListener('keydown',e=>{if(e.key==='Enter')nowSearchCity();});
+renderNowChips();nowTick();setInterval(nowTick,1000);wxLoad(false);
 
 renderAll();
 renderSecNav('today');
