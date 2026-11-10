@@ -1132,7 +1132,7 @@ body[data-skin="galaxy"] .fx-fauna i:nth-child(5){top:70vh;left:4vw;animation:no
       <button class="mu-pp" id="muPP" onclick="muToggle()" title="播放/暂停">▶</button>
       <input type="range" class="mu-vol" id="muVol" min="0" max="100" value="50" oninput="muSetVol(this.value)" title="音量">
     </div>
-    <div class="mu-tip" id="muTip">💡 三首氛围曲与古典名曲由浏览器实时演奏，不依赖外部音频文件；「📁 我的音乐」上传后<b>永久保存</b>在浏览器里（刷新也不丢）——把喜欢的歌传进来就能当专属 BGM。</div>
+    <div class="mu-tip" id="muTip">💡 三首氛围曲与古典改编由浏览器实时演奏；「真实录音」四首来自维基共享资源的公版/CC 授权演奏（署名见 MUSIC-CREDITS.md）；「📁 我的音乐」上传后永久保存。</div>
   </div>
   <button class="mu-btn" id="muBtn" onclick="muTogglePanel()" title="背景音乐">🎵</button>
   <input type="file" id="muFile" accept="audio/*" style="display:none" onchange="muUpload(this)">
@@ -2155,6 +2155,11 @@ const MU_LIST=[
   {id:'flelise',nm:'🎹 致爱丽丝',ds:'贝多芬 · 钢琴'},
   {id:'canon',nm:'🎻 D大调卡农',ds:'帕赫贝尔 · 弦乐'},
   {id:'minuet',nm:'🎼 G大调小步舞曲',ds:'巴赫 · 钢琴'},
+  /* 真实演奏录音（Wikimedia Commons 公版/CC BY-SA 4.0，详见 MUSIC-CREDITS.md） */
+  {id:'furelise',nm:'🎹 致爱丽丝',ds:'贝多芬 · 真实录音',url:'music/fur-elise.ogg'},
+  {id:'moonlight',nm:'🌙 月光奏鸣曲',ds:'贝多芬 · 第二乐章',url:'music/moonlight-mvt2.ogg'},
+  {id:'clairedelune',nm:'☁️ 月光',ds:'德彪西 · 真实录音',url:'music/clair-de-lune.opus'},
+  {id:'canonD',nm:'🎸 D大调卡农',ds:'帕赫贝尔 · 吉他',url:'music/canon-in-d-guitar.ogg'},
   {id:'custom',nm:'📁 我的音乐',ds:'上传喜欢的歌'}
 ];
 let AC=null,muGain=null,muTimer=null,muNoiseSrc=null,muCustom=null,muCustomURL='';
@@ -2162,7 +2167,8 @@ let muPlaying=false,muPanelOn=false,muNextT=0,muStep=0,muWantToastShown=false;
 let muTrack=data.muTrack||'lullaby',muVol=(data.muVol!=null?data.muVol:50);
 /* 用户上传的永久歌单（IndexedDB 持久化，刷新不丢） */
 const MU_URLS={};let MU_DB=[];
-function muIsAudio(id){return id==='custom'||(id+'').slice(0,3)==='db-';}
+function muSrcOf(id){const t=MU_LIST.find(x=>x.id===id);return t&&t.url?t.url:null;}
+function muIsAudio(id){return id==='custom'||(id+'').slice(0,3)==='db-'||!!muSrcOf(id);}
 function muIdb(){return new Promise(res=>{try{const rq=indexedDB.open('glowupMusic',1);rq.onupgradeneeded=()=>rq.result.createObjectStore('songs',{keyPath:'id'});rq.onsuccess=()=>res(rq.result);rq.onerror=()=>res(null);}catch(e){res(null);}});}
 function muIdbAll(){return muIdb().then(db=>db?new Promise(res=>{const rq=db.transaction('songs','readonly').objectStore('songs').getAll();rq.onsuccess=()=>res(rq.result||[]);rq.onerror=()=>res([]);}):Promise.resolve([]));}
 function muIdbPut(s){return muIdb().then(db=>db?new Promise(res=>{const tx=db.transaction('songs','readwrite').objectStore('songs').put(s);tx.onsuccess=tx.onerror=res;}):Promise.resolve());}
@@ -2267,7 +2273,9 @@ function muStop(){
 function muToggle(){muPlaying?muStop():muStart();}
 function muSetTrack(id){
   if(id==='custom'){document.getElementById('muFile').click();return;}
-  if(id.slice(0,3)==='db-'&&!MU_URLS[id]){const s=MU_DB.find(x=>x.id===id);if(!s)return;
+  const u=muSrcOf(id);
+  if(u){if(!muCustom)muCustom=new Audio();muCustom.loop=true;muCustom.src=u;}
+  else if(id.slice(0,3)==='db-'&&!MU_URLS[id]){const s=MU_DB.find(x=>x.id===id);if(!s)return;
     MU_URLS[id]=URL.createObjectURL(s.blob);
     if(!muCustom)muCustom=new Audio();
     muCustom.loop=true;muCustom.src=MU_URLS[id];}
@@ -2331,6 +2339,10 @@ muRender();muUI();
 document.getElementById('muVol').value=muVol;
 muIdbAll().then(list=>{
   MU_DB=list;
+  if(muSrcOf(data.muTrack)&&!((data.muTrack+'').slice(0,3)==='db-')){
+    if(!muCustom)muCustom=new Audio();
+    muCustom.loop=true;muCustom.src=muSrcOf(data.muTrack);
+  }
   if(data.muTrack&&(data.muTrack+'').slice(0,3)==='db-'){
     const s=MU_DB.find(x=>x.id===data.muTrack);
     if(s){MU_URLS[s.id]=URL.createObjectURL(s.blob);
