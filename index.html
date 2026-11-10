@@ -746,6 +746,8 @@ body[data-skin="galaxy"] .fx-fauna i:nth-child(5){top:70vh;left:4vw;animation:no
 .mu-tr.on{border-color:var(--a2);background:var(--a1);font-weight:700}
 .mu-tr .mu-nm{flex:1}
 .mu-tr .mu-ds{font-size:10px;color:var(--tx2);font-weight:400}
+.mu-del{border:none;background:transparent;color:var(--tx2);font-family:inherit;font-size:11px;cursor:pointer;padding:2px 4px;margin-left:5px;border-radius:6px;line-height:1}
+.mu-del:hover{color:#e05a6d;background:rgba(224,90,109,.12)}
 .mu-ctrl{display:flex;align-items:center;gap:9px;margin-top:11px;padding-top:11px;border-top:1px dashed var(--bd)}
 .mu-pp{width:32px;height:32px;border-radius:50%;border:none;background:var(--a3);color:#fff;font-size:13px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:.2s}
 .mu-pp:hover{filter:brightness(1.1)}
@@ -1130,7 +1132,7 @@ body[data-skin="galaxy"] .fx-fauna i:nth-child(5){top:70vh;left:4vw;animation:no
       <button class="mu-pp" id="muPP" onclick="muToggle()" title="播放/暂停">▶</button>
       <input type="range" class="mu-vol" id="muVol" min="0" max="100" value="50" oninput="muSetVol(this.value)" title="音量">
     </div>
-    <div class="mu-tip" id="muTip">💡 古典名曲为程序化改编、由浏览器实时演奏，不依赖外部音频文件；「我的音乐」仅本次会话有效（刷新后需重新上传）。</div>
+    <div class="mu-tip" id="muTip">💡 三首氛围曲与古典名曲由浏览器实时演奏，不依赖外部音频文件；「📁 我的音乐」上传后<b>永久保存</b>在浏览器里（刷新也不丢）——把喜欢的歌传进来就能当专属 BGM。</div>
   </div>
   <button class="mu-btn" id="muBtn" onclick="muTogglePanel()" title="背景音乐">🎵</button>
   <input type="file" id="muFile" accept="audio/*" style="display:none" onchange="muUpload(this)">
@@ -2158,6 +2160,13 @@ const MU_LIST=[
 let AC=null,muGain=null,muTimer=null,muNoiseSrc=null,muCustom=null,muCustomURL='';
 let muPlaying=false,muPanelOn=false,muNextT=0,muStep=0,muWantToastShown=false;
 let muTrack=data.muTrack||'lullaby',muVol=(data.muVol!=null?data.muVol:50);
+/* 用户上传的永久歌单（IndexedDB 持久化，刷新不丢） */
+const MU_URLS={};let MU_DB=[];
+function muIsAudio(id){return id==='custom'||(id+'').slice(0,3)==='db-';}
+function muIdb(){return new Promise(res=>{try{const rq=indexedDB.open('glowupMusic',1);rq.onupgradeneeded=()=>rq.result.createObjectStore('songs',{keyPath:'id'});rq.onsuccess=()=>res(rq.result);rq.onerror=()=>res(null);}catch(e){res(null);}});}
+function muIdbAll(){return muIdb().then(db=>db?new Promise(res=>{const rq=db.transaction('songs','readonly').objectStore('songs').getAll();rq.onsuccess=()=>res(rq.result||[]);rq.onerror=()=>res([]);}):Promise.resolve([]));}
+function muIdbPut(s){return muIdb().then(db=>db?new Promise(res=>{const tx=db.transaction('songs','readwrite').objectStore('songs').put(s);tx.onsuccess=tx.onerror=res;}):Promise.resolve());}
+function muIdbDel(id){return muIdb().then(db=>db?new Promise(res=>{const tx=db.transaction('songs','readwrite').objectStore('songs').delete(id);tx.onsuccess=tx.onerror=res;}):Promise.resolve());}
 /* 和弦进行（Am7 → Fmaj7 → C → G）与音阶 */
 const MU_CHORDS=[[220,261.63,329.63,440],[174.61,220,261.63,349.23],[261.63,329.63,392,523.25],[196,246.94,293.66,392]];
 const MU_FOREST=[523.25,587.33,659.25,783.99,880,1046.5];
@@ -2237,12 +2246,12 @@ function muStartNoise(vol,freq){
 }
 function muStopNoise(){if(muNoiseSrc){try{muNoiseSrc.stop()}catch(e){}muNoiseSrc=null;}}
 function muStart(){
-  if(muTrack==='custom'&&!muCustom){toast('先在面板里上传一首歌吧 📁');muPanelOpen();return;}
+  if(muIsAudio(muTrack)&&!muCustom){toast('先在面板里上传一首歌吧 📁');muPanelOpen();return;}
   if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
   AC.resume();
   if(!muGain){muGain=AC.createGain();muGain.connect(AC.destination);}
   muGain.gain.setTargetAtTime(muVol/100,AC.currentTime,0.05);
-  if(muTrack==='custom'){muCustom.volume=muVol/100;var pp=muCustom.play();if(pp&&pp.catch)pp.catch(()=>{});}
+  if(muIsAudio(muTrack)){muCustom.volume=muVol/100;var pp=muCustom.play();if(pp&&pp.catch)pp.catch(()=>{});}
   else{const n=MU_NOISE[muTrack];if(n&&n[0])muStartNoise(n[0],n[1]);muNextT=AC.currentTime+0.1;if(MU_SONGS[muTrack])MU_RT[muTrack]={i:0,t0:AC.currentTime+0.15};if(!muTimer)muTimer=setInterval(muTick,110);}
   muPlaying=true;data.muWant=true;persist();
   document.getElementById('muBtn').classList.remove('hint');
@@ -2257,7 +2266,11 @@ function muStop(){
 }
 function muToggle(){muPlaying?muStop():muStart();}
 function muSetTrack(id){
-  if(id==='custom'&&!muCustomURL){document.getElementById('muFile').click();return;}
+  if(id==='custom'){document.getElementById('muFile').click();return;}
+  if(id.slice(0,3)==='db-'&&!MU_URLS[id]){const s=MU_DB.find(x=>x.id===id);if(!s)return;
+    MU_URLS[id]=URL.createObjectURL(s.blob);
+    if(!muCustom)muCustom=new Audio();
+    muCustom.loop=true;muCustom.src=MU_URLS[id];}
   if(id===muTrack){if(!muPlaying)muStart();return;}
   muTrack=id;data.muTrack=id;persist();
   const wasPlay=muPlaying;if(wasPlay)muStop();
@@ -2266,14 +2279,26 @@ function muSetTrack(id){
 }
 function muUpload(inp){
   const f=inp.files[0];if(!f)return;
-  if(muCustomURL)URL.revokeObjectURL(muCustomURL);
-  muCustomURL=URL.createObjectURL(f);
-  if(!muCustom)muCustom=new Audio();
-  muCustom.src=muCustomURL;muCustom.loop=true;
-  muTrack='custom';data.muTrack='custom';persist();
-  toast('已加载「'+f.name.slice(0,18)+'」🎶');
-  if(muPlaying){muStop();muStart();}else muStart();
-  muRender();
+  const s={id:'db-'+Date.now(),name:(f.name.replace(/\.[^.]+$/,'')||'我的音乐').slice(0,24),blob:f};
+  muIdbPut(s).then(()=>{
+    MU_DB.push(s);
+    MU_URLS[s.id]=URL.createObjectURL(f);
+    if(!muCustom)muCustom=new Audio();
+    muCustom.loop=true;muCustom.src=MU_URLS[s.id];
+    muTrack=s.id;data.muTrack=s.id;persist();
+    toast('「'+s.name+'」已加入永久歌单 🎶 下次打开还在');
+    if(muPlaying){muStop();muStart();}else muStart();
+    muRender();
+  });
+}
+function muDelTrack(id,ev){
+  ev.stopPropagation();
+  muIdbDel(id).then(()=>{
+    MU_DB=MU_DB.filter(x=>x.id!==id);
+    if(MU_URLS[id]){URL.revokeObjectURL(MU_URLS[id]);delete MU_URLS[id];}
+    if(muTrack===id){if(muPlaying)muStop();muTrack=data.muTrack=MU_LIST[0].id;persist();}
+    muRender();toast('已从歌单移除');
+  });
 }
 function muSetVol(v){
   muVol=+v;data.muVol=muVol;persist();
@@ -2281,15 +2306,16 @@ function muSetVol(v){
   if(AC&&muGain&&muPlaying)muGain.gain.setTargetAtTime(muVol/100,AC.currentTime,0.05);
 }
 function muRender(){
-  document.getElementById('muTracks').innerHTML=MU_LIST.map(t=>'<div class="mu-tr'+(t.id===muTrack?' on':'')+'" onclick="muSetTrack(\''+t.id+'\')"><span class="mu-nm">'+t.nm+'</span><span class="mu-ds">'+(t.id==='custom'?(muCustomURL?'已上传 ✓':'点击上传'):t.ds)+'</span></div>').join('');
+  const dbRows=MU_DB.map(t=>'<div class="mu-tr'+(t.id===muTrack?' on':'')+'" onclick="muSetTrack(\''+t.id+'\')"><span class="mu-nm">🎵 '+t.name+'</span><span class="mu-ds">已保存<button class="mu-del" onclick="muDelTrack(\''+t.id+'\',event)" title="从歌单移除">✕</button></span></div>').join('');
+  document.getElementById('muTracks').innerHTML=dbRows+MU_LIST.map(t=>'<div class="mu-tr'+(t.id===muTrack?' on':'')+'" onclick="muSetTrack(\''+t.id+'\')"><span class="mu-nm">'+t.nm+'</span><span class="mu-ds">'+(t.id==='custom'?'点击上传':t.ds)+'</span></div>').join('');
 }
 function muUI(){
   const btn=document.getElementById('muBtn'),pp=document.getElementById('muPP'),st=document.getElementById('muState');
   btn.classList.toggle('playing',muPlaying);
   btn.classList.toggle('hint',!muPlaying&&!!data.muWant);
   pp.textContent=muPlaying?'⏸':'▶';
-  const cur=MU_LIST.find(x=>x.id===muTrack);
-  st.textContent=muPlaying?'播放中 · '+cur.nm.replace(/^\S+\s/,''):'未播放';
+  const cur=MU_LIST.find(x=>x.id===muTrack)||(MU_DB.find(x=>x.id===muTrack)?{nm:'🎵 '+(MU_DB.find(x=>x.id===muTrack).name)}:null);
+  st.textContent=muPlaying&&cur?'播放中 · '+cur.nm.replace(/^\S+\s/,''):'未播放';
 }
 function muPanelOpen(){muPanelOn=true;document.getElementById('muPanel').classList.add('on');}
 function muTogglePanel(){
@@ -2303,6 +2329,17 @@ document.addEventListener('click',e=>{
 ['pointerdown','keydown'].forEach(ev=>document.addEventListener(ev,()=>{if(AC&&AC.state==='suspended'&&muPlaying)AC.resume();},{passive:true}));
 muRender();muUI();
 document.getElementById('muVol').value=muVol;
+muIdbAll().then(list=>{
+  MU_DB=list;
+  if(data.muTrack&&(data.muTrack+'').slice(0,3)==='db-'){
+    const s=MU_DB.find(x=>x.id===data.muTrack);
+    if(s){MU_URLS[s.id]=URL.createObjectURL(s.blob);
+      if(!muCustom)muCustom=new Audio();
+      muCustom.loop=true;muCustom.src=MU_URLS[s.id];}
+    else{muTrack=data.muTrack=MU_LIST[0].id;persist();}
+  }
+  muRender();muUI();
+});
 if(data.muWant){document.getElementById('muBtn').classList.add('hint');
   setTimeout(()=>{if(!muWantToastShown&&!muPlaying){muWantToastShown=true;toast('上次背景音乐还开着，点左下角 🎵 继续播放');}},4200);
 }
