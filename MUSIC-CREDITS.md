@@ -13,6 +13,7 @@ GlowUp 音乐播放器中的**真实演奏录音**来自 [Wikimedia Commons](htt
 | G弦上的咏叹调（巴赫） | Joel Belov（小提琴）、Robert Gayler（钢琴），1920 年录音 | Public domain | https://commons.wikimedia.org/wiki/File:Air_(Bach).ogg |
 | 夜曲 Op.9 No.2（肖邦） | Frank Levy（钢琴，Musopen） | Public domain | https://commons.wikimedia.org/wiki/File:Nocturne_in_E_flat_major,_Op._9_no._2.mp3 |
 | 梦幻曲（舒曼） | Musopen 录音 | Public domain | https://commons.wikimedia.org/wiki/File:Robert_Schumann_-_scenes_from_childhood,_op._15_-_vii._dreaming.ogg |
+| 无伴奏大提琴组曲 No.1 BWV 1007 全六乐章（巴赫） | John Michel（大提琴） | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:JOHN_MICHEL_CELLO-J_S_BACH_CELLO_SUITE_1_in_G_Prelude.ogg 等六章 |
 
 以下曲目来自 [Internet Archive](https://archive.org/) 收录的历史演奏录音（仅供个人学习欣赏）：
 
@@ -23,3 +24,7 @@ GlowUp 音乐播放器中的**真实演奏录音**来自 [Wikimedia Commons](htt
 其余曲目（星海摇篮曲、雨夜琴房、森林晨风）为 GlowUp 内置的原创合成内容，无第三方版权。
 
 CC BY-SA 4.0 说明：可自由使用、分享与改编，需署名并以相同方式共享。
+
+CC BY-SA 3.0 说明：巴赫《无伴奏大提琴组曲 No.1》由 John Michel 演奏，依 CC BY-SA 3.0 授权使用，共六个乐章（前奏曲 / 阿勒曼德 / 库朗特 / 萨拉班德 / 小步舞曲 / 吉格），播放器内按乐章顺序连续播放。
+
+> 注：马友友（Yo-Yo Ma）的巴赫无伴奏大提琴组曲录音为 Sony Classical 商业发行，版权受保护，未在本站内置。此处选用可自由分发的真实演奏录音作为替代。

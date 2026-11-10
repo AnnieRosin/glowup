@@ -2160,6 +2160,7 @@ const MU_LIST=[
   {id:'campanella',nm:'🔔 钟',ds:'帕格尼尼 · 小提琴',url:'music/pag-campanella-violin.ogg'},
   {id:'gymnopedie',nm:'🎐 裸体舞曲 No.1',ds:'萨蒂 · 钢琴',url:'music/gymnopedie-no1.ogg'},
   {id:'lecygne',nm:'🦢 天鹅',ds:'圣-桑 · 大提琴',url:'music/le-cygne-cello.ogg'},
+  {id:'bachsuite',nm:'🎻 无伴奏大提琴组曲 No.1',ds:'巴赫 · 六乐章连播',seq:['music/bach-suite1-1-prelude.ogg','music/bach-suite1-2-allemande.ogg','music/bach-suite1-3-courante.ogg','music/bach-suite1-4-sarabande.ogg','music/bach-suite1-5-minuets.ogg','music/bach-suite1-6-gigue.ogg']},
   {id:'air',nm:'🎻 G弦上的咏叹调',ds:'巴赫 · 小提琴',url:'music/air-on-g-string-violin.ogg'},
   {id:'nocturne',nm:'🌙 夜曲 Op.9 No.2',ds:'肖邦 · 钢琴',url:'music/chopin-nocturne-op9-2.mp3'},
   {id:'traumerei',nm:'💭 梦幻曲',ds:'舒曼 · 钢琴',url:'music/traumerei-piano.ogg'},
@@ -2172,7 +2173,20 @@ let muTrack=data.muTrack||'lullaby',muVol=(data.muVol!=null?data.muVol:50);
 if(!((muTrack+'').slice(0,3)==='db-'||MU_LIST.find(x=>x.id===muTrack)))muTrack=data.muTrack=MU_LIST[0].id;
 /* 用户上传的永久歌单（IndexedDB 持久化，刷新不丢） */
 const MU_URLS={};let MU_DB=[];
-function muSrcOf(id){const t=MU_LIST.find(x=>x.id===id);return t&&t.url?t.url:null;}
+function muSrcOf(id){const t=MU_LIST.find(x=>x.id===id);return t?(t.seq?t.seq[0]:(t.url||null)):null;}
+/* 分乐章连播：某些曲目由多个音频片段组成（如巴赫无伴奏组曲六个乐章） */
+function muSeqOf(id){const t=MU_LIST.find(x=>x.id===id);return t&&t.seq&&t.seq.length?t.seq:null;}
+let muSeqI=0;
+function muBindEnded(){
+  if(!muCustom)return;
+  muCustom.onended=()=>{
+    const sq=muSeqOf(muTrack);if(!sq)return;
+    muSeqI=(muSeqI+1)%sq.length;
+    muCustom.src=sq[muSeqI];muCustom.volume=muVol/100;
+    if(muPlaying){const p=muCustom.play();if(p&&p.catch)p.catch(()=>{});}
+    muUI();
+  };
+}
 function muIsAudio(id){return id==='custom'||(id+'').slice(0,3)==='db-'||!!muSrcOf(id);}
 function muIdb(){return new Promise(res=>{try{const rq=indexedDB.open('glowupMusic',1);rq.onupgradeneeded=()=>rq.result.createObjectStore('songs',{keyPath:'id'});rq.onsuccess=()=>res(rq.result);rq.onerror=()=>res(null);}catch(e){res(null);}});}
 function muIdbAll(){return muIdb().then(db=>db?new Promise(res=>{const rq=db.transaction('songs','readonly').objectStore('songs').getAll();rq.onsuccess=()=>res(rq.result||[]);rq.onerror=()=>res([]);}):Promise.resolve([]));}
@@ -2224,7 +2238,12 @@ function muStartNoise(vol,freq){
 }
 function muStopNoise(){if(muNoiseSrc){try{muNoiseSrc.stop()}catch(e){}muNoiseSrc=null;}}
 function muStart(){
-  if(muIsAudio(muTrack)&&!muCustom){toast('先在面板里上传一首歌吧 📁');muPanelOpen();return;}
+  if(muIsAudio(muTrack)&&!muCustom){
+    const sq=muSeqOf(muTrack),u0=muSrcOf(muTrack);
+    if(sq){muCustom=new Audio();muCustom.loop=false;muSeqI=0;muCustom.src=sq[0];muBindEnded();}
+    else if(u0){muCustom=new Audio();muCustom.loop=true;muCustom.src=u0;}
+    else{toast('先在面板里上传一首歌吧 📁');muPanelOpen();return;}
+  }
   if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
   AC.resume();
   if(!muGain){muGain=AC.createGain();muGain.connect(AC.destination);}
@@ -2245,13 +2264,18 @@ function muStop(){
 function muToggle(){muPlaying?muStop():muStart();}
 function muSetTrack(id){
   if(id==='custom'){document.getElementById('muFile').click();return;}
-  const u=muSrcOf(id);
-  if(u){if(!muCustom)muCustom=new Audio();muCustom.loop=true;muCustom.src=u;}
-  else if(id.slice(0,3)==='db-'&&!MU_URLS[id]){const s=MU_DB.find(x=>x.id===id);if(!s)return;
+  if(id===muTrack){if(!muPlaying)muStart();else muUI();return;}
+  const sq=muSeqOf(id),u=muSrcOf(id);
+  if(!sq&&!u&&id.slice(0,3)==='db-'&&!MU_URLS[id]){
+    const s=MU_DB.find(x=>x.id===id);if(!s)return;
     MU_URLS[id]=URL.createObjectURL(s.blob);
-    if(!muCustom)muCustom=new Audio();
-    muCustom.loop=true;muCustom.src=MU_URLS[id];}
-  if(id===muTrack){if(!muPlaying)muStart();return;}
+  }
+  if(!muCustom)muCustom=new Audio();
+  if(sq){ /* 多乐章：从头开始，逐段连播 */
+    muCustom.loop=false;muSeqI=0;muCustom.src=sq[0];muBindEnded();
+  }else{
+    muCustom.loop=true;muCustom.onended=null;muCustom.src=u||MU_URLS[id];
+  }
   muTrack=id;data.muTrack=id;persist();
   const wasPlay=muPlaying;if(wasPlay)muStop();
   if(wasPlay)muStart();
@@ -2295,7 +2319,8 @@ function muUI(){
   btn.classList.toggle('hint',!muPlaying&&!!data.muWant);
   pp.textContent=muPlaying?'⏸':'▶';
   const cur=MU_LIST.find(x=>x.id===muTrack)||(MU_DB.find(x=>x.id===muTrack)?{nm:'🎵 '+(MU_DB.find(x=>x.id===muTrack).name)}:null);
-  st.textContent=muPlaying&&cur?'播放中 · '+cur.nm.replace(/^\S+\s/,''):'未播放';
+  const sq=muSeqOf(muTrack);
+  st.textContent=muPlaying&&cur?'播放中 · '+cur.nm.replace(/^\S+\s/,'')+(sq?'（'+(muSeqI+1)+'/'+sq.length+'）':''):'未播放';
 }
 function muPanelOpen(){muPanelOn=true;document.getElementById('muPanel').classList.add('on');}
 function muTogglePanel(){
@@ -2313,7 +2338,9 @@ muIdbAll().then(list=>{
   MU_DB=list;
   if(muSrcOf(data.muTrack)&&!((data.muTrack+'').slice(0,3)==='db-')){
     if(!muCustom)muCustom=new Audio();
-    muCustom.loop=true;muCustom.src=muSrcOf(data.muTrack);
+    const sq=muSeqOf(data.muTrack);
+    if(sq){muCustom.loop=false;muSeqI=0;muBindEnded();}else muCustom.loop=true;
+    muCustom.src=muSrcOf(data.muTrack);
   }
   if(data.muTrack&&(data.muTrack+'').slice(0,3)==='db-'){
     const s=MU_DB.find(x=>x.id===data.muTrack);
