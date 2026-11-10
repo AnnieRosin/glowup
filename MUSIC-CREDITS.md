@@ -16,6 +16,6 @@ GlowUp 音乐播放器中的**真实演奏录音**来自 [Wikimedia Commons](htt
 | 钟 La Campanella（帕格尼尼，克莱斯勒小提琴改编版） | Alfredo Campoli（小提琴）、George Malcolm（钢琴） | https://archive.org/details/PaganiniLaCampanella |
 | 引子与华丽的波兰舞曲 Op.3（肖邦） | André Navarra（大提琴），1963 年录音 | https://archive.org/details/lp_introduction-and-polonaise-brillante-g_frdric-chopin-andr-navarra |
 
-其余曲目（星海摇篮曲、雨夜琴房、森林晨风、致爱丽丝/卡农/小步舞曲的程序化改编）为 GlowUp 内置的原创合成内容，无第三方版权。
+其余曲目（星海摇篮曲、雨夜琴房、森林晨风）为 GlowUp 内置的原创合成内容，无第三方版权。
 
 CC BY-SA 4.0 说明：可自由使用、分享与改编，需署名并以相同方式共享。
