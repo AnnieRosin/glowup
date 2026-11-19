@@ -796,6 +796,35 @@ body[data-skin="galaxy"] .fx-fauna i:nth-child(5){top:70vh;left:4vw;animation:no
 .pk-result{margin-top:6px;text-align:center;font-size:13.5px;font-weight:700}
 .pk-result.win{color:#5bb98c}.pk-result.lose{color:#e0885f}.pk-result.tie{color:var(--tx2)}
 
+/* ---------- 牛马计时器（股市风工资跳动） ---------- */
+.ox-live{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:2px 0 10px}
+.ox-big{font-size:38px;font-weight:700;color:#E0404A;font-variant-numeric:tabular-nums;letter-spacing:.5px;display:flex;align-items:baseline;gap:6px;line-height:1}
+.ox-big .ox-cur{font-size:20px;font-weight:600}
+.ox-trend{font-size:15px;color:#E0404A;display:inline-block;transform-origin:center}
+.ox-trend.tick{animation:oxTrend .45s ease}
+@keyframes oxTrend{0%{transform:translateY(0) scale(1)}40%{transform:translateY(-4px) scale(1.25)}100%{transform:translateY(0) scale(1)}}
+.ox-sub{font-size:13px;color:var(--tx2)}
+.ox-sub b{color:#E0404A;font-variant-numeric:tabular-nums}
+.ox-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.ox-cell{flex:1;min-width:110px;background:var(--purple-50);border-radius:10px;padding:8px 10px}
+.ox-cell .ox-k{display:block;font-size:11px;color:var(--tx2);margin-bottom:2px}
+.ox-cell .ox-v{font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
+.ox-chart{width:100%;height:72px;display:block;border-radius:8px;background:var(--purple-50)}
+.ox-chartwrap{position:relative}
+.ox-target{position:absolute;top:5px;right:8px;font-size:10px;color:var(--tx2);pointer-events:none}
+.ox-quote{margin-top:8px;font-size:12.5px;color:var(--tx2)}
+.ox-quote b{color:var(--tx)}
+.ox-set{display:none;margin-top:10px;padding-top:10px;border-top:1px dashed var(--bd)}
+.ox-set.on{display:block}
+.ox-setrow{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.ox-setrow label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--tx2)}
+.ox-setrow input[type=number],.ox-setrow input[type=time]{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:6px 8px;color:var(--tx);font-size:13px;width:110px}
+.ox-setrow input[type=checkbox]{accent-color:var(--a3)}
+.ox-setrow .ox-chk{flex-direction:row;align-items:center;gap:6px;user-select:none}
+.wx-chip.ox-tgl{margin-top:10px}
+.ox-closed{font-size:13px;color:var(--tx2);padding:10px 0 4px}
+.ox-closed b{color:var(--amber-400)}
+
 </style>
 </head>
 <body data-skin="galaxy">
@@ -887,6 +916,45 @@ body[data-skin="galaxy"] .fx-fauna i:nth-child(5){top:70vh;left:4vw;animation:no
         <div class="wx-citybar">
           <input id="wxCityInp" placeholder="其他城市：输入名字，如 巴黎 / Singapore" maxlength="30">
           <button class="wx-chip" onclick="nowSearchCity()">搜索</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="sec-ox">
+      <div class="card-h"><div class="card-t">🐂 牛马计时器</div><span class="hint" id="oxHint">工资实时跳动 · 像股市一样</span></div>
+      <div class="ox-live">
+        <div class="ox-big"><span class="ox-cur">¥</span><span id="oxDay">0.00</span><span class="ox-trend" id="oxTrend">▲</span></div>
+        <div class="ox-sub" id="oxSub">今日到手 · 每秒 <b>¥0.0000</b></div>
+      </div>
+      <div class="ox-meta">
+        <div class="ox-cell"><span class="ox-k">秒薪</span><span class="ox-v" id="oxSec">--</span></div>
+        <div class="ox-cell"><span class="ox-k">时薪</span><span class="ox-v" id="oxHr">--</span></div>
+        <div class="ox-cell"><span class="ox-k">本月已到手</span><span class="ox-v" id="oxMon">--</span></div>
+        <div class="ox-cell"><span class="ox-k">今日进度</span><span class="ox-v" id="oxProg">--</span></div>
+      </div>
+      <div class="ox-chartwrap">
+        <svg class="ox-chart" id="oxChart" viewBox="0 0 600 80" preserveAspectRatio="none" aria-hidden="true">
+          <defs><linearGradient id="oxFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#E0404A" stop-opacity=".32"/>
+            <stop offset="1" stop-color="#E0404A" stop-opacity="0"/>
+          </linearGradient></defs>
+          <path d="M0 20 H600 M0 50 H600" stroke="rgba(255,255,255,.07)" stroke-width="1" stroke-dasharray="4 6" fill="none"/>
+          <path d="M0 8 H600" stroke="rgba(224,64,74,.3)" stroke-width="1" stroke-dasharray="3 6" fill="none"/>
+          <path id="oxArea" fill="url(#oxFill)" d=""/>
+          <path id="oxLine" fill="none" stroke="#E0404A" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" d=""/>
+        </svg>
+        <div class="ox-target" id="oxTarget"></div>
+      </div>
+      <div class="ox-quote" id="oxQuote"></div>
+      <button class="wx-chip ox-tgl" id="oxTgl" onclick="oxToggleSet()">⚙️ 设置工资</button>
+      <div class="ox-set" id="oxSet">
+        <div class="ox-setrow">
+          <label>税后月薪（元）<input type="number" id="oxSal" min="0" step="100" placeholder="如 15000"></label>
+          <label>工作日 / 月<input type="number" id="oxDays" min="1" max="31" step="0.5"></label>
+          <label>上班时间<input type="time" id="oxStart"></label>
+          <label>下班时间<input type="time" id="oxEnd"></label>
+          <label class="ox-chk"><input type="checkbox" id="ox24"> 全天计薪模式（睡觉也在赚）</label>
+          <button class="btn" onclick="oxSave()">保存</button>
         </div>
       </div>
     </div>
@@ -1099,6 +1167,9 @@ body[data-skin="galaxy"] .fx-fauna i:nth-child(5){top:70vh;left:4vw;animation:no
 
     <h4>🎵 背景音乐</h4>
     <div class="hr">左下角 <b>🎵</b> 打开音乐面板：3 首原创氛围曲 + 11 首真实演奏录音（巴赫、贝多芬、肖邦、德彪西……其中《无伴奏大提琴组曲》会按六个乐章连续播放），也可以上传自己的歌；音量随意调，播放时唱片会转圈。</div>
+
+    <h4>🐂 牛马计时器</h4>
+    <div class="hr">点 <b>⚙️ 设置工资</b> 填上税后月薪、工作日和上下班时间，今日到手的每一分钱就会像股价一样实时跳动（<b>红色上涨</b>）；周末休市、下班收盘，还能开「全天计薪模式」连睡觉都算钱。</div>
 
     <div class="tip">💡 数据小贴士：所有记录都保存在你这台电脑的浏览器里，记得不要清理浏览器缓存，也尽量固定用同一个浏览器打开哦。</div>
     <button class="btn p help-close" onclick="closeHelp()">我知道啦，开始点亮星星 ✨</button>
@@ -1912,7 +1983,7 @@ function delCountdown(i){data.countdowns.splice(i,1);persist();renderCountdowns(
 /* ---------- 区块导航（把每个标签页拆块，减少下滑） ---------- */
 const SECS={
   today:[
-    {g:'状态',items:[['sec-mood','🌤','心情 & 连续'],['sec-now','⏰','此时此刻'],['sec-fate','🔮','命运指引']]},
+    {g:'状态',items:[['sec-mood','🌤','心情 & 连续'],['sec-now','⏰','此时此刻'],['sec-ox','🐂','牛马计时器'],['sec-fate','🔮','命运指引']]},
     {g:'行动',items:[['sec-top3','🎯','三件最重要的事'],['sec-cats','🌸','成长板块'],['sec-sched','📅','今日日程']]},
     {g:'收尾',items:[['sec-quote','💫','今日鼓励语']]}
   ],
@@ -2433,6 +2504,159 @@ function renderNowChips(){
 }
 document.getElementById('wxCityInp').addEventListener('keydown',e=>{if(e.key==='Enter')nowSearchCity();});
 renderNowChips();nowTick();setInterval(nowTick,1000);wxLoad(false);
+
+/* ---------- 牛马计时器：工资像股市一样实时跳动 ---------- */
+const OX_DEF={salary:0,days:21.75,start:'09:00',end:'18:00',h24:false};
+let OX=Object.assign({},OX_DEF,data.ox||{});
+const OX_QUOTES=['牛马一秒也值钱 💪','别眨眼，钱在跑 💸','带薪喝水，合法薅羊毛 🥤','这一秒你赚到了，别丢','热爱搬砖，从我做起 🧱','每一分都有你的名字 💰','存款 +1，心不慌','牛马的浪漫：数字在涨 📈'];
+function oxRate(){ /* 元/秒 */
+  const s=parseFloat(OX.salary);
+  if(!s||s<=0)return 0;
+  if(OX.h24)return s/(30*24*3600);
+  const d=Math.max(1,parseFloat(OX.days)||21.75);
+  const [sh,sm]=(OX.start||'09:00').split(':').map(Number),[eh,em]=(OX.end||'18:00').split(':').map(Number);
+  const hrs=Math.max(1,(eh*60+em)-(sh*60+sm))/60;
+  return s/(d*hrs*3600);
+}
+function oxWorkBounds(){ /* 今日工作时段秒数区间 */
+  const [sh,sm]=(OX.start||'09:00').split(':').map(Number),[eh,em]=(OX.end||'18:00').split(':').map(Number);
+  return [sh*3600+sm*60,eh*3600+em*60];
+}
+function oxToday(){ /* 今日累计到手（元） */
+  const r=oxRate();if(!r)return 0;
+  const now=new Date();
+  if(OX.h24){
+    const daySec=now.getHours()*3600+now.getMinutes()*60+now.getSeconds();
+    return r*daySec;
+  }
+  const wd=now.getDay();
+  if(wd===0||wd===6)return 0; /* 周末休市 */
+  const n=now.getHours()*3600+now.getMinutes()*60+now.getSeconds();
+  const [s,e]=oxWorkBounds();
+  return r*Math.max(0,Math.min(n,e)-s);
+}
+function oxDayPay(){ const s=parseFloat(OX.salary);if(!s)return 0;return OX.h24?s/30:s/(Math.max(1,parseFloat(OX.days)||21.75)); }
+function oxMonthEarned(){ /* 本月 1 号至今累计 */
+  const s=parseFloat(OX.salary);if(!s)return 0;
+  const now=new Date();
+  if(OX.h24)return s/30*(now.getDate()-1)+oxToday();
+  const dp=oxDayPay();let past=0;
+  for(let d=1;d<now.getDate();d++){
+    const w=new Date(now.getFullYear(),now.getMonth(),d).getDay();
+    if(w!==0&&w!==6)past++;
+  }
+  return past*dp+oxToday();
+}
+function oxState(){ /* 开盘前/交易中/已收盘/休市 */
+  const now=new Date();
+  if(OX.h24)return 'open';
+  const wd=now.getDay();
+  if(wd===0||wd===6)return 'weekend';
+  const n=now.getHours()*3600+now.getMinutes()*60+now.getSeconds();
+  const [s,e]=oxWorkBounds();
+  if(n<s)return 'pre';
+  if(n>=e)return 'post';
+  return 'open';
+}
+function oxRenderChart(){
+  const svg=document.getElementById('oxChart');if(!svg)return;
+  const line=document.getElementById('oxLine'),area=document.getElementById('oxArea');
+  const st=oxState(),W=600,H=80;
+  const r=oxRate();
+  if(!r||st==='weekend'){line.setAttribute('d','');area.setAttribute('d','');svg.style.opacity=.35;return;}
+  svg.style.opacity=1;
+  const now=new Date();
+  const sec0=now.getHours()*3600+now.getMinutes()*60+now.getSeconds();
+  let s,e;
+  if(OX.h24){s=0;e=24*3600;}
+  else{const b=oxWorkBounds();s=b[0];e=b[1];}
+  const span=Math.max(1,e-s);
+  /* 曲线：已走过的部分（真实）+ 到下班的虚线预期 */
+  const nowX=Math.max(0,Math.min(1,(sec0-s)/span));
+  const pts=[],step=span/120;
+  for(let t=s;t<=Math.min(sec0,e);t+=step)pts.push([(t-s)/span,r*(t-s)]);
+  if(pts.length<2)pts.push([0,0],[nowX||0.001,r*Math.max(0.001,Math.min(sec0,e)-s)]);
+  const maxY=Math.max(r*span,1);
+  const path=pts.map((p,i)=>(i?'L':'M')+ (p[0]*W).toFixed(1)+' '+(H-4-(p[1]/maxY)*(H-14)).toFixed(1)).join(' ');
+  line.setAttribute('d',path);
+  area.setAttribute('d',path+` L ${(pts[pts.length-1][0]*W).toFixed(1)} ${H} L ${(pts[0][0]*W).toFixed(1)} ${H} Z`);
+}
+let oxLastDay=0;
+function oxTick(){
+  const el=document.getElementById('oxDay');if(!el)return;
+  const r=oxRate(),st=oxState();
+  const day=oxToday();
+  const hint=document.getElementById('oxHint'),sub=document.getElementById('oxSub'),quote=document.getElementById('oxQuote');
+  if(!r){
+    el.textContent='0.00';
+    document.getElementById('oxTarget').textContent='';
+    hint.textContent='填上工资，看钱怎么跑';
+    sub.innerHTML='今日到手 · 还没发车 🚂';
+    ['oxSec','oxHr','oxMon','oxProg'].forEach(id=>document.getElementById(id).textContent='--');
+    quote.innerHTML='💡 点下方 ⚙️ 设置工资，然后就能看到每一秒的进账';
+    oxRenderChart();
+    return;
+  }
+  el.textContent=day.toFixed(2);
+  document.getElementById('oxTarget').textContent='今日目标 ¥'+oxDayPay().toFixed(2);
+  document.getElementById('oxSec').textContent='¥'+r.toFixed(4)+' /秒';
+  document.getElementById('oxHr').textContent='¥'+(r*3600).toFixed(2)+' /时';
+  document.getElementById('oxMon').textContent='¥'+oxMonthEarned().toFixed(2);
+  const dp=Math.max(oxDayPay(),0.01);
+  document.getElementById('oxProg').textContent=Math.min(100,day/dp*100).toFixed(1)+'%';
+  const [s,e]=oxWorkBounds();
+  const now=new Date();
+  const n=now.getHours()*3600+now.getMinutes()*60+now.getSeconds();
+  if(st==='weekend'){
+    hint.textContent='股市休市 · 牛马也是';
+    sub.innerHTML='周末不上班，工资静止 🐮🎉';
+    quote.innerHTML='<b>休市中</b> · 周一到周五再来围观钱怎么跑';
+  }else if(st==='pre'){
+    const m=Math.max(0,Math.round((s-n)/60));
+    hint.textContent='开盘前 · 等待发车';
+    sub.innerHTML='距离上班还有 <b>'+m+'</b> 分钟，还没开盘 📉';
+    quote.innerHTML='<b>集合竞价中</b> · '+(OX_QUOTES[Math.floor(Math.random()*OX_QUOTES.length)]);
+  }else if(st==='post'){
+    hint.textContent='已收盘 · 今日定格';
+    sub.innerHTML='今日到手 <b>¥'+day.toFixed(2)+'</b> · 已收盘，明天继续 🌙';
+    quote.innerHTML='<b>收盘总结</b> · 今天为国家建设和老板的车库贡献了 '+ (day>0? '¥'+day.toFixed(2):'0 元');
+  }else{
+    const left=Math.max(0,Math.round((e-n)/60));
+    hint.textContent='交易中 · 实时到账';
+    sub.innerHTML='今日到手 · 每秒 <b>¥'+r.toFixed(4)+'</b>，距离下班还有 '+Math.floor(left/60)+' 小时 '+left%60+' 分钟';
+    quote.innerHTML=OX_QUOTES[Math.floor(Math.random()*OX_QUOTES.length)];
+    const tr=document.getElementById('oxTrend');
+    if(day>oxLastDay){tr.classList.remove('tick');void tr.offsetWidth;tr.classList.add('tick');}
+  }
+  oxLastDay=day;
+  oxRenderChart();
+}
+function oxToggleSet(){
+  const set=document.getElementById('oxSet');
+  set.classList.toggle('on');
+  if(set.classList.contains('on')){
+    document.getElementById('oxSal').value=OX.salary||'';
+    document.getElementById('oxDays').value=OX.days||21.75;
+    document.getElementById('oxStart').value=OX.start||'09:00';
+    document.getElementById('oxEnd').value=OX.end||'18:00';
+    document.getElementById('ox24').checked=!!OX.h24;
+  }
+}
+function oxSave(){
+  const s=parseFloat(document.getElementById('oxSal').value);
+  if(!s||s<=0){toast('先填上税后月薪呀 💰');return;}
+  const st=document.getElementById('oxStart').value||'09:00',en=document.getElementById('oxEnd').value||'18:00';
+  if(en<=st){toast('下班时间要晚于上班时间哦（暂不支持跨天夜班）🌙');return;}
+  OX.salary=s;
+  OX.days=parseFloat(document.getElementById('oxDays').value)||21.75;
+  OX.start=st;OX.end=en;
+  OX.h24=document.getElementById('ox24').checked;
+  data.ox=OX;persist();
+  document.getElementById('oxSet').classList.remove('on');
+  oxTick();
+  toast('已发车 🚂 每秒 ¥'+oxRate().toFixed(4)+'，钱跑起来了');
+}
+oxTick();setInterval(oxTick,500);
 
 renderAll();
 renderSecNav('today');
